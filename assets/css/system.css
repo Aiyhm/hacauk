@@ -1,0 +1,366 @@
+/* ==========================================================================
+   HacAUK visual system
+   Palette sampled from the club posters. Shared by the library page and decks.
+   ========================================================================== */
+
+:root {
+  /* colour */
+  --night: #040D1C;       /* latest poster: night sky */
+  --navy: #07112E;        /* retro posters: card navy */
+  --navy-2: #0B1A45;
+  --ink: #03050A;
+  --amber: #F8AA0B;
+  --amber-hi: #FFC53D;
+  --amber-lo: #EB9909;
+  --amber-deep: #D0900F;
+  --bronze: #926918;
+  --bronze-lo: #6E5019;
+  --umber: #2F261B;
+  --cream: #FAEDD1;
+  --cream-warm: #F9E7B7;
+  --glow: 248, 170, 11;
+
+  /* type */
+  --font-display: 'Anton', 'Impact', 'Haettenschweiler', 'Arial Narrow Bold', sans-serif;
+  --font-brand: 'Titan One', 'Arial Rounded MT Bold', 'Arial Black', sans-serif;
+  --font-cond: 'Barlow Condensed', 'Avenir Next Condensed', 'Arial Narrow', sans-serif;
+  --font-body: 'Sora', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* motion */
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-in: cubic-bezier(.7, 0, .84, 0);
+  --ease-io: cubic-bezier(.76, 0, .24, 1);
+  --ease-back: cubic-bezier(.34, 1.56, .64, 1);
+
+  /* the poster "3D" letter extrude: amber stepping down to bronze, then a hard drop shadow */
+  --extrude:
+    .0035em .0065em 0 var(--amber), .007em .013em 0 var(--amber), .0105em .0195em 0 var(--amber),
+    .014em .026em 0 var(--amber), .0175em .0325em 0 var(--amber), .021em .039em 0 var(--amber-lo),
+    .0245em .0455em 0 var(--amber-lo), .028em .052em 0 var(--amber-lo), .0315em .0585em 0 var(--amber-lo),
+    .035em .065em 0 var(--amber-deep), .0385em .0715em 0 var(--amber-deep), .042em .078em 0 var(--amber-deep),
+    .0455em .0845em 0 var(--amber-deep), .049em .091em 0 var(--bronze),
+    .075em .13em 0 rgba(3, 8, 20, .55);
+  --extrude-dark:
+    .0035em .0065em 0 var(--amber-deep), .007em .013em 0 var(--amber-deep), .0105em .0195em 0 var(--amber-deep),
+    .014em .026em 0 var(--bronze), .0175em .0325em 0 var(--bronze), .021em .039em 0 var(--bronze),
+    .0245em .0455em 0 var(--bronze), .028em .052em 0 var(--bronze-lo), .0315em .0585em 0 var(--bronze-lo),
+    .035em .065em 0 var(--bronze-lo), .0385em .0715em 0 var(--bronze-lo), .042em .078em 0 var(--umber),
+    .0455em .0845em 0 var(--umber), .049em .091em 0 var(--umber),
+    .075em .13em 0 rgba(3, 8, 20, .55);
+
+  --star: polygon(50% 0, 56.5% 43.5%, 100% 50%, 56.5% 56.5%, 50% 100%, 43.5% 56.5%, 0 50%, 43.5% 43.5%);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ==========================================================================
+   World — the persistent backdrop. 1920x1080 coordinates, bleeds past the stage.
+   ========================================================================== */
+
+.world {
+  position: absolute; inset: 0; pointer-events: none;
+  --sun-x: 960px; --sun-y: 640px; --sun-s: 1;
+  --rays: .1; --rays-solid: 9%; --rays-reach: 60%;
+  --floor: 0; --terrain: 1; --orbits: .55; --glow-o: 1; --stars: 1; --dim: 0;
+  --world-dur: 1.5s;
+}
+.world[data-scene="burst"] { --rays: 1; --rays-solid: 99%; --rays-reach: 100%; --floor: 1; --terrain: 0; --orbits: 0; --glow-o: 0; }
+.world[data-scene="dusk"] { --rays: .18; --rays-reach: 70%; --orbits: .3; }
+.world[data-scene="void"] { --rays: .05; --orbits: 0; --stars: .55; --dim: .3; }
+.world.is-instant, .world.is-instant * { transition: none !important; }
+.world.is-still * { animation: none !important; }
+
+.w-sky {
+  position: absolute; inset: -1600px;
+  background: linear-gradient(180deg, #030A17 0%, var(--night) 40%, #061329 62%, #07142E 100%);
+}
+.world[data-scene="burst"] .w-sky { background: var(--navy); }
+
+.w-anchor {
+  position: absolute; left: 0; top: 0; width: 0; height: 0;
+  transform: translate3d(var(--sun-x), var(--sun-y), 0);
+  transition: transform var(--world-dur) var(--ease-io);
+  will-change: transform;
+}
+.w-glow {
+  position: absolute; left: -1300px; top: -1300px; width: 2600px; height: 2600px; border-radius: 50%;
+  background: radial-gradient(circle closest-side, rgba(var(--glow), .36) 0, rgba(var(--glow), .17) 26%, rgba(var(--glow), .05) 52%, transparent 74%);
+  opacity: var(--glow-o);
+  transform: scale(calc(.5 + var(--sun-s) * .5));
+  transition: opacity .9s, transform var(--world-dur) var(--ease-io);
+}
+.w-rays {
+  position: absolute; left: -1900px; top: -1900px; width: 3800px; height: 3800px;
+  opacity: var(--rays); transition: opacity .9s;
+  -webkit-mask-image: radial-gradient(circle closest-side, #000 0, #000 var(--rays-solid), transparent var(--rays-reach));
+  mask-image: radial-gradient(circle closest-side, #000 0, #000 var(--rays-solid), transparent var(--rays-reach));
+}
+.w-rays i {
+  position: absolute; inset: 0; border-radius: 50%;
+  background:
+    repeating-conic-gradient(from 3deg, var(--amber) 0 6.9deg, transparent 7.05deg 17.9deg, var(--amber) 18deg),
+    repeating-conic-gradient(from 12deg, var(--amber) 0 2.5deg, transparent 2.65deg 35.9deg, var(--amber) 36deg);
+  animation: w-spin 260s linear infinite;
+}
+.w-orbits {
+  position: absolute; left: -900px; top: -420px; width: 1800px; height: 840px;
+  opacity: var(--orbits);
+  transform: scale(calc(.45 + var(--sun-s) * .55));
+  transition: opacity .9s, transform var(--world-dur) var(--ease-io);
+}
+.w-orbits svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.w-orbits ellipse { fill: none; stroke: var(--amber); stroke-width: 1.6; }
+.w-orbits .wo-a { stroke-opacity: .55; }
+.w-orbits .wo-b { stroke-opacity: .3; }
+.w-sun {
+  position: absolute; left: -410px; top: -410px; width: 820px; height: 820px; border-radius: 50%;
+  transform: scale(var(--sun-s));
+  transition: transform var(--world-dur) var(--ease-io);
+  background: radial-gradient(circle at 50% 34%, #FFD166 0, #FBB727 28%, var(--amber) 54%, #E79508 80%, #C57B05 100%);
+  box-shadow: 0 0 70px 10px rgba(var(--glow), .5), 0 0 200px 70px rgba(var(--glow), .2);
+}
+.w-sun i {
+  position: absolute; inset: 0; border-radius: 50%; opacity: .75;
+  background: radial-gradient(circle, rgba(120, 70, 0, .55) 0 1.7px, transparent 2.3px) 0 0 / 10px 10px;
+  -webkit-mask-image: linear-gradient(155deg, transparent 32%, #000 100%);
+  mask-image: linear-gradient(155deg, transparent 32%, #000 100%);
+}
+.world[data-scene="burst"] .w-sun { background: var(--amber); box-shadow: none; }
+
+.w-stars { position: absolute; inset: 0; opacity: var(--stars); transition: opacity .9s; }
+.spark { display: block; aspect-ratio: 1; background: var(--amber); clip-path: var(--star); }
+.w-star { position: absolute; translate: -50% -50%; animation: w-twinkle 5s ease-in-out infinite; }
+.w-star--cream { background: var(--cream); }
+
+.w-terrain {
+  position: absolute; left: -480px; top: 0; width: 2880px; height: 1500px;
+  opacity: var(--terrain);
+  transform: translate3d(0, calc((1 - var(--terrain)) * 320px), 0);
+  transition: opacity .7s, transform 1.2s var(--ease-io);
+}
+.w-terrain svg { display: block; width: 100%; height: 100%; }
+.w-terrain::after { content: ''; position: absolute; left: -1400px; right: -1400px; top: 1499px; height: 1800px; background: var(--ink); }
+
+.w-mesa { position: absolute; left: -480px; top: 520px; width: 2880px; height: 900px; opacity: var(--floor); transition: opacity .5s; }
+.w-mesa svg { display: block; width: 100%; height: 100%; }
+.w-floor {
+  position: absolute; left: -1400px; right: -1400px; top: 900px; height: 1900px; overflow: hidden;
+  background: var(--navy); opacity: var(--floor); transition: opacity .5s;
+  perspective: 420px; perspective-origin: 50% 0;
+}
+.w-floor-plane {
+  position: absolute; left: 0; right: 0; top: -240px; height: 2400px; transform-origin: 50% 240px;
+  background-image:
+    linear-gradient(90deg, transparent calc(50% - 1.5px), rgba(248, 170, 11, .95) calc(50% - 1.5px) calc(50% + 1.5px), transparent calc(50% + 1.5px)),
+    linear-gradient(180deg, rgba(248, 170, 11, .95) 0 3px, transparent 3px);
+  background-size: 240px 240px, 240px 240px;
+  background-position: 50% 0, 0 0;
+  transform: rotateX(72deg);
+  animation: w-floor 3.2s linear infinite;
+}
+.w-floor::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--amber); z-index: 2; }
+.w-floor::after {
+  content: ''; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(180deg, var(--navy) 0, rgba(7, 17, 46, .72) 5%, rgba(7, 17, 46, 0) 26%);
+}
+.w-dim { position: absolute; inset: -1600px; background: var(--night); opacity: var(--dim); transition: opacity .9s; }
+
+@keyframes w-spin { to { transform: rotate(360deg); } }
+@keyframes w-twinkle {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  46% { transform: scale(.3) rotate(42deg); }
+  54% { transform: scale(.3) rotate(48deg); }
+}
+@keyframes w-floor {
+  from { transform: rotateX(72deg) translate3d(0, 0, 0); }
+  to { transform: rotateX(72deg) translate3d(0, 240px, 0); }
+}
+
+/* print grain + vignette + the worn cream card border of the retro posters */
+.grain, .vignette, .frame { position: fixed; inset: 0; pointer-events: none; }
+.grain {
+  z-index: 7; opacity: .34;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='a' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .98 0 0 0 0 .93 0 0 0 0 .82 1.9 0 0 0 -1.02'/%3E%3C/filter%3E%3Cfilter id='b' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' seed='23' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .01 0 0 0 0 .03 0 0 0 0 .08 0 2.2 0 0 -1.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23a)' opacity='.5'/%3E%3Crect width='100%25' height='100%25' filter='url(%23b)'/%3E%3C/svg%3E");
+}
+.vignette { z-index: 6; background: radial-gradient(ellipse at 50% 46%, transparent 52%, rgba(2, 5, 12, .62) 100%); }
+.frame { z-index: 8; opacity: 0; transition: opacity .45s; }
+.frame::before {
+  content: ''; position: absolute; inset: clamp(8px, 1.3vmin, 20px); border-radius: clamp(14px, 2.6vmin, 38px);
+  box-shadow: 0 0 0 80px var(--cream), inset 0 0 0 2px rgba(7, 17, 46, .55), inset 0 0 70px rgba(3, 8, 20, .5);
+}
+body[data-scene="burst"] .frame { opacity: 1; }
+body[data-scene="burst"] .vignette { opacity: .45; }
+
+/* ==========================================================================
+   Shared components
+   ========================================================================== */
+
+/* fat italic poster lettering */
+.display {
+  margin: 0; font-family: var(--font-display); font-style: italic; font-weight: 400; text-transform: uppercase;
+  line-height: .96; letter-spacing: .012em; color: var(--cream);
+  -webkit-text-stroke: .034em var(--navy); paint-order: stroke fill;
+  text-shadow: var(--extrude);
+}
+.display--amber { color: var(--amber); text-shadow: var(--extrude-dark); }
+.display--flat { text-shadow: .03em .05em 0 rgba(3, 8, 20, .5); }
+
+/* the HacAUK wordmark: <span class="brandmark">H<small>ac</small>AUK</span> */
+.brandmark {
+  display: inline-block; font-family: var(--font-brand); font-style: italic; font-weight: 400; line-height: 1;
+  letter-spacing: -.012em; color: var(--cream); white-space: nowrap;
+  -webkit-text-stroke: .03em var(--navy); paint-order: stroke fill;
+  text-shadow: var(--extrude);
+}
+.brandmark small { font-size: .76em; }
+
+/* thin wide-tracked italic caps, flanked by speed lines */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: .8em; margin: 0;
+  font-family: var(--font-cond); font-style: italic; font-weight: 500; text-transform: uppercase;
+  letter-spacing: .44em; line-height: 1; color: var(--cream); white-space: nowrap;
+}
+.eyebrow > span { margin-right: -.44em; }
+.eyebrow::before, .eyebrow::after {
+  content: ''; flex: none; width: 2.6em; height: .34em; transform: skewX(-24deg);
+  background: linear-gradient(var(--amber) 0 0) 0 0 / 100% .1em no-repeat,
+              linear-gradient(var(--amber) 0 0) 100% 100% / 68% .1em no-repeat;
+}
+.eyebrow::after {
+  background: linear-gradient(var(--amber) 0 0) 0 0 / 100% .1em no-repeat,
+              linear-gradient(var(--amber) 0 0) 0 100% / 68% .1em no-repeat;
+}
+.eyebrow--bare::before, .eyebrow--bare::after { display: none; }
+
+/* small mono label */
+.label {
+  font-family: var(--font-mono); font-weight: 500; text-transform: uppercase; letter-spacing: .32em;
+  color: var(--amber); line-height: 1;
+}
+
+/* winged stripe bars with a medallion */
+.wings { display: inline-flex; align-items: center; justify-content: center; gap: 22px; }
+.wing { display: flex; flex-direction: column; gap: 9px; width: 300px; }
+.wing i { display: block; height: 11px; background: var(--amber); }
+.wing i:nth-child(1) { width: 100%; }
+.wing i:nth-child(2) { width: 82%; }
+.wing i:nth-child(3) { width: 62%; }
+.wing--l { align-items: flex-end; }
+.wing--l i { clip-path: polygon(16px 0, 100% 0, 100% 100%, 0 100%); transform-origin: 100% 50%; }
+.wing--r { align-items: flex-start; }
+.wing--r i { clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 100%, 0 100%); transform-origin: 0 50%; }
+.medal { flex: none; width: 170px; height: 170px; }
+.medal svg { display: block; width: 100%; height: 100%; }
+
+/* star-capped pill caption */
+.pill {
+  display: inline-flex; align-items: center; gap: .7em; margin: 0; padding: .4em 1em;
+  border: 4px solid var(--amber); border-radius: 999px; background: var(--navy);
+  font-family: var(--font-cond); font-weight: 600; letter-spacing: .03em; line-height: 1.1; color: var(--cream);
+  box-shadow: 0 0 0 4px var(--navy), 0 12px 0 -1px rgba(3, 8, 20, .4);
+}
+.pill::before, .pill::after { content: ''; flex: none; width: .78em; aspect-ratio: 1; background: var(--amber); clip-path: var(--star); }
+
+/* chamfered info plaque */
+.plaque {
+  --c: 20px; position: relative; display: inline-flex; align-items: stretch; isolation: isolate;
+  padding: 2px; background: var(--amber); clip-path: polygon(var(--c) 0, calc(100% - var(--c)) 0, 100% var(--c), 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, var(--c) 100%, 0 calc(100% - var(--c)), 0 var(--c));
+}
+.plaque::before {
+  content: ''; position: absolute; inset: 2px; z-index: -1; background: rgba(4, 11, 24, .94);
+  --c2: calc(var(--c) - 1.2px);
+  clip-path: polygon(var(--c2) 0, calc(100% - var(--c2)) 0, 100% var(--c2), 100% calc(100% - var(--c2)),
+      calc(100% - var(--c2)) 100%, var(--c2) 100%, 0 calc(100% - var(--c2)), 0 var(--c2));
+}
+.plaque-cell {
+  position: relative; display: flex; align-items: center; gap: 18px; padding: 22px 42px;
+  font-family: var(--font-body); font-weight: 700; font-size: 23px; letter-spacing: .05em; line-height: 1.15;
+  text-transform: uppercase; text-align: left; color: var(--cream);
+}
+.plaque-cell + .plaque-cell::before { content: ''; position: absolute; left: 0; top: 24%; bottom: 24%; width: 2px; background: rgba(248, 170, 11, .75); }
+.plaque-cell svg { flex: none; width: 44px; height: 44px; fill: none; stroke: var(--amber); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* glowing glass tool tile */
+.tile {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  width: 280px; aspect-ratio: 1; border-radius: 36px; color: var(--cream); text-decoration: none;
+  background:
+    linear-gradient(150deg, rgba(250, 237, 209, .2), rgba(250, 237, 209, .03) 44%, rgba(248, 170, 11, .12)),
+    rgba(5, 11, 26, .66);
+  border: 2px solid rgba(250, 237, 209, .8);
+  box-shadow: 0 0 0 1.5px rgba(248, 170, 11, .55), 0 0 30px 3px rgba(var(--glow), .5),
+    inset 0 0 36px rgba(var(--glow), .2), inset 0 0 0 1px rgba(var(--glow), .4);
+}
+.tile svg { width: 44%; height: auto; fill: none; stroke: var(--cream); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+.tile svg .fill { fill: var(--cream); stroke: none; }
+.tile b { font-family: var(--font-body); font-weight: 600; font-size: 34px; letter-spacing: -.01em; line-height: 1; white-space: nowrap; }
+
+/* little rounded label */
+.chip {
+  display: inline-flex; align-items: center; gap: 12px; padding: 9px 24px 10px;
+  font-family: var(--font-cond); font-weight: 600; font-size: 34px; letter-spacing: .16em; line-height: 1;
+  text-transform: uppercase; color: var(--cream); white-space: nowrap;
+  border: 2px solid rgba(248, 170, 11, .85); border-radius: 999px; background: rgba(4, 11, 24, .72);
+}
+
+/* "open the live demo" button */
+.launch {
+  --c: 13px; display: inline-flex; align-items: center; gap: 16px; padding: 17px 30px 17px 28px;
+  font-family: var(--font-mono); font-weight: 700; font-size: 24px; letter-spacing: .1em; line-height: 1;
+  text-transform: uppercase; text-decoration: none; white-space: nowrap; color: var(--navy);
+  background: var(--amber); clip-path: polygon(var(--c) 0, calc(100% - var(--c)) 0, 100% var(--c), 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, var(--c) 100%, 0 calc(100% - var(--c)), 0 var(--c)); cursor: pointer; border: 0;
+  transition: background .2s, transform .2s var(--ease-out);
+}
+.launch::after { content: '\2197'; font-size: 1.15em; transition: transform .25s var(--ease-out); }
+.launch:hover { background: var(--amber-hi); transform: translateY(-2px); }
+.launch:hover::after { transform: translate(4px, -4px); }
+.launch--ghost { background: none; color: var(--amber); box-shadow: inset 0 0 0 2px var(--amber); clip-path: none; border-radius: 6px; }
+.launch--ghost:hover { background: rgba(248, 170, 11, .14); }
+
+/* terminal-style prompt card */
+.prompt {
+  --c: 24px; position: relative; isolation: isolate; width: 100%; padding: 2px; text-align: left;
+  background: linear-gradient(120deg, var(--amber), rgba(248, 170, 11, .45) 60%, var(--amber));
+  clip-path: polygon(var(--c) 0, calc(100% - var(--c)) 0, 100% var(--c), 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, var(--c) 100%, 0 calc(100% - var(--c)), 0 var(--c));
+}
+.prompt::before {
+  content: ''; position: absolute; inset: 2px; z-index: -1; background: rgba(3, 8, 19, .95);
+  --c2: calc(var(--c) - 1.2px);
+  clip-path: polygon(var(--c2) 0, calc(100% - var(--c2)) 0, 100% var(--c2), 100% calc(100% - var(--c2)),
+      calc(100% - var(--c2)) 100%, var(--c2) 100%, 0 calc(100% - var(--c2)), 0 var(--c2));
+}
+.prompt-bar {
+  display: flex; align-items: center; gap: 18px; padding: 15px 30px;
+  border-bottom: 1.5px solid rgba(248, 170, 11, .32);
+  font-family: var(--font-mono); font-weight: 500; font-size: 19px; letter-spacing: .26em; line-height: 1;
+  text-transform: uppercase; color: var(--amber);
+}
+.prompt-bar::before { content: ''; flex: none; width: 57px; height: 12px; background: radial-gradient(circle, var(--amber) 0 5px, transparent 5.6px) 0 0 / 19px 12px repeat-x; opacity: .9; }
+.prompt-copy {
+  margin-left: auto; padding: 7px 14px; border: 1.5px solid rgba(248, 170, 11, .6); border-radius: 5px; background: none;
+  font: inherit; letter-spacing: .2em; text-transform: uppercase; color: var(--amber); cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.prompt-copy:hover, .prompt-copy.is-done { background: var(--amber); color: var(--navy); }
+.prompt-link { margin-left: auto; letter-spacing: .08em; text-transform: none; color: var(--cream); white-space: nowrap; }
+.prompt-link b { color: var(--amber-hi); font-weight: 700; }
+.prompt-link + .prompt-copy { margin-left: 0; }
+.prompt-text {
+  margin: 0; padding: 28px 36px 34px; font-family: var(--font-mono); font-weight: 400; font-size: 33px; line-height: 1.42;
+  color: var(--cream); text-wrap: pretty;
+}
+.prompt-text::before { content: '> '; color: var(--amber); font-weight: 700; }
+.prompt-text mark { background: none; color: var(--amber-hi); }
+
+kbd, .kbd {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 1.9em; padding: .18em .5em;
+  font-family: var(--font-mono); font-weight: 700; font-size: .82em; line-height: 1.2; letter-spacing: 0;
+  color: var(--amber); border: 1.5px solid rgba(248, 170, 11, .6); border-bottom-width: 3px; border-radius: 6px;
+  background: rgba(4, 11, 24, .7);
+}
+
+/* pixel checker cluster */
+.pix { display: block; width: 66px; height: 66px; background: conic-gradient(var(--amber) 25%, transparent 0 50%, var(--amber) 0 75%, transparent 0) 0 0 / 44px 44px; }
+
+:focus-visible { outline: 3px solid var(--cream); outline-offset: 4px; }

@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Art of AI Prompting — HacAUK</title>
+<meta name="description" content="HacAUK workshop deck: The Art of AI Prompting.">
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Titan+One&family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;1,400;1,500&family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/system.css">
+<link rel="stylesheet" href="../../assets/css/deck.css">
+<link rel="stylesheet" href="deck.css">
+</head>
+<body>
+
+<!-- Tile glyphs: simple line marks drawn for this deck (not the companies' logos). -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="g-chatgpt" viewBox="0 0 100 100"><g id="g-petal"><path d="M50 50C36 34 42 12 50 9c8 3 14 25 0 41Z"/></g><use href="#g-petal" transform="rotate(60 50 50)"/><use href="#g-petal" transform="rotate(120 50 50)"/><use href="#g-petal" transform="rotate(180 50 50)"/><use href="#g-petal" transform="rotate(240 50 50)"/><use href="#g-petal" transform="rotate(300 50 50)"/></symbol>
+    <symbol id="g-claude" viewBox="0 0 100 100"><path d="M50 6v32M50 62v32M6 50h32M62 50h32M19 19l22 22M59 59l22 22M81 19 59 41M41 59 19 81M33 9l9 28M58 63l9 28M9 67l28-9M63 42l28-9"/></symbol>
+    <symbol id="g-napkin" viewBox="0 0 100 100"><path d="M14 14h72v54L68 86H14Z"/><path d="M86 68H68v18"/><circle cx="34" cy="36" r="7"/><circle cx="64" cy="36" r="7"/><circle cx="46" cy="62" r="7"/><path d="M41 36h16M37 43l6 13M60 42 50 56"/></symbol>
+    <symbol id="g-chatpdf" viewBox="0 0 100 100"><path d="M22 8h38l20 20v64H22Z"/><path d="M60 8v20h20"/><path d="M35 48h30M35 62h30M35 76h17"/></symbol>
+    <symbol id="g-replit" viewBox="0 0 100 100"><rect class="fill" x="20" y="10" width="30" height="26" rx="6"/><rect class="fill" x="50" y="37" width="30" height="26" rx="6"/><rect class="fill" x="20" y="64" width="30" height="26" rx="6"/></symbol>
+    <symbol id="g-lovable" viewBox="0 0 100 100"><path d="M50 86C20 64 10 46 10 33c0-12 9-21 21-21 8 0 15 4 19 11 4-7 11-11 19-11 12 0 21 9 21 21 0 13-10 31-40 53Z"/></symbol>
+    <symbol id="g-banana" viewBox="0 0 100 100"><path d="M20 16c-2 34 20 58 58 58 6 0 8 6 3 9-34 18-74-6-72-58 0-6 3-11 6-12 3-1 5 0 5 3Z"/><path d="M15 14l4-7"/></symbol>
+    <symbol id="g-images" viewBox="0 0 100 100"><rect x="10" y="16" width="80" height="68" rx="10"/><path d="M10 70l24-24 17 17 12-11 27 25"/><circle cx="67" cy="38" r="7"/></symbol>
+    <symbol id="g-terminal" viewBox="0 0 100 100"><rect x="8" y="14" width="84" height="72" rx="12"/><path d="M27 40l15 11-15 11M52 64h21"/></symbol>
+    <symbol id="g-codex" viewBox="0 0 100 100"><path d="M37 26 13 50l24 24M63 26l24 24-24 24M57 16 43 84"/></symbol>
+    <symbol id="g-gamma" viewBox="0 0 100 100"><rect x="12" y="22" width="62" height="42" rx="7"/><path d="M26 78h62V36"/></symbol>
+  </defs>
+</svg>
+
+<main class="deck" data-deck="art-of-ai-prompting" data-title="The Art of AI Prompting" data-home="../../index.html" data-sheet-url="aiyhm.github.io/hacauk/p">
+
+  <!-- ===================================================== 1 · TITLE -->
+  <section class="slide s-title" data-title="The Art of AI Prompting" data-scene="night" data-sun="960,716,.82" data-minutes="0">
+    <div class="t-top" data-anim="drop" data-delay="1500">
+      <span class="wing wing--l"><i></i><i></i><i></i></span>
+      <span class="brandmark">H<small>ac</small>AUK</span>
+      <span class="wing wing--r"><i></i><i></i><i></i></span>
+    </div>
+    <p class="eyebrow t-eyebrow" data-anim="fade" data-delay="250"><span>The art of</span></p>
+    <h1 class="display t-title" data-split data-arc="0.085" data-lean="4" data-delay="500">AI Prompting</h1>
+
+    <div class="t-laptop" data-anim="rise" data-delay="1150">
+      <div class="laptop">
+        <div class="laptop-lid"><div class="laptop-screen">
+          <svg viewBox="0 0 200 110" aria-hidden="true"><path class="lp-chev" d="M12 12l52 43-52 43"/><rect class="lp-cur" x="92" y="86" width="74" height="15"/></svg>
+        </div></div>
+        <div class="laptop-base"></div>
+      </div>
+    </div>
+
+    <div class="tile t-tile t-tile--1" data-anim="tilt" data-idle="float" data-delay="1500"><svg><use href="#g-chatgpt"/></svg><b>ChatGPT</b></div>
+    <div class="tile t-tile t-tile--2" data-anim="tilt" data-idle="float" data-delay="1680"><svg><use href="#g-claude"/></svg><b>Claude</b></div>
+    <div class="tile t-tile t-tile--3" data-anim="tilt" data-idle="float" data-delay="1590"><svg><use href="#g-replit"/></svg><b>Replit</b></div>
+    <div class="tile t-tile t-tile--4" data-anim="tilt" data-idle="float" data-delay="1770"><svg><use href="#g-lovable"/></svg><b>Lovable</b></div>
+    <div class="tile t-tile t-tile--5" data-anim="tilt" data-idle="float" data-delay="1860"><b>and<br>more…</b></div>
+
+    <div class="t-info-wrap" data-anim="rise" data-delay="2050">
+      <div class="plaque">
+        <div class="plaque-cell"><svg viewBox="0 0 48 48"><rect x="7" y="10" width="34" height="31" rx="4"/><path d="M7 20h34M16 5v9M32 5v9M16 28h4M28 28h4M16 34h4"/></svg><span>Tuesday<br>6th of Oct</span></div>
+        <div class="plaque-cell"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="17"/><path d="M24 13v12l7 5"/></svg><span>2:00 PM</span></div>
+        <div class="plaque-cell"><svg viewBox="0 0 48 48"><path d="M24 43S9 29 9 19a15 15 0 0130 0c0 10-15 24-15 24Z"/><circle cx="24" cy="19" r="5"/></svg><span>Library,<br>Learning Center</span></div>
+      </div>
+    </div>
+    <p class="t-presenter" data-anim="fade" data-delay="2300"><span class="label">Presenter</span><b>Aiyhm Mahir</b></p>
+    <div class="qr t-qr" data-anim="pop" data-delay="2500">
+      <div class="plaque"><div class="qr-in"><img src="../../assets/img/qr-prompts.svg" alt="QR code to the prompt sheet"><span>Scan for the prompts</span></div></div>
+    </div>
+
+    <!-- one click: the QR fills the screen so the back row can scan it -->
+    <div class="t-scan" data-step="1" data-anim="pop">
+      <div class="plaque"><div class="t-scan-in">
+        <img src="../../assets/img/qr-prompts.svg" alt="QR code to the prompt sheet">
+        <div>
+          <p class="label">Every prompt, ready to copy</p>
+          <p class="t-scan-url">aiyhm.github.io<wbr>/hacauk/p</p>
+          <p class="lead">Scan it, or type it.<br>Then open chatgpt.com.</p>
+        </div>
+      </div></div>
+    </div>
+
+    <aside class="notes">
+      <p><strong>While people sit: click once.</strong> The QR fills the screen. It opens a phone page with every prompt from today, ready to copy. Ask them to scan it, open <code>chatgpt.com</code> in a second tab, and find a pen and any scrap of paper.</p>
+      <p>One promise: <strong>you will type more than I talk.</strong></p>
+      <p><strong>The night before:</strong></p>
+      <ul>
+        <li>Check Claude Code opens <code>demo/claude</code> and the ChatGPT desktop app's Codex mode opens <code>demo/codex</code>. No access to one? Record it or drop that side now.</li>
+        <li>Record a 40-second screen capture of the agent race as a backup.</li>
+        <li>Build and keep open: the finished Lovable site, the finished Replit app, two posters (Gemini and ChatGPT).</li>
+        <li>Save one short, text-based PDF on the desktop.</li>
+        <li>Rehearse Napkin with the plan Claude gives you; keep a five-sentence plan ready to paste in case the table does not paste cleanly.</li>
+      </ul>
+      <p><strong>Before 2:00:</strong></p>
+      <ul>
+        <li>Tabs signed in, in order: ChatGPT, Claude, Napkin AI, ChatPDF, Lovable, Replit, Gemini, ChatGPT Images, then the backup tabs.</li>
+        <li>Terminal in <code>demo/claude</code>; ChatGPT desktop app in <code>demo/codex</code>.</li>
+        <li>Do not spend today's Claude, ChatPDF, Lovable or image allowance on rehearsal.</li>
+        <li>Hotspot on. Do Not Disturb on. Chat sidebars collapsed.</li>
+        <li><strong>F</strong> fullscreen, <strong>S</strong> speaker view. Point at the QR code: every prompt is there to copy.</li>
+      </ul>
+    </aside>
+  </section>
+
+  <!-- ===================================================== 2 · WHAT AI IS -->
+  <section class="slide s-guess" data-title="It guesses the next word" data-scene="night" data-sun="1730,196,.52" data-transition="zoom" data-minutes="2.5">
+    <p class="eyebrow eyebrow--bare" data-anim="fade"><span>What is AI, really?</span></p>
+    <h2 class="display" data-split>It guesses the next word.</h2>
+
+    <div class="guess-stage">
+      <div class="guess g1" data-anim="rise" data-delay="1250">
+        <p class="guess-line">Twinkle, twinkle, little <span class="blank"><span class="q">?</span><b>star</b></span></p>
+        <div class="cands" data-step="1" data-anim="fade">
+          <span class="cand">star <i style="--p:.97"></i><em>97%</em></span>
+          <span class="cand">lamb <i style="--p:.02"></i><em>2%</em></span>
+          <span class="cand">car <i style="--p:.01"></i><em>1%</em></span>
+        </div>
+      </div>
+      <div class="guess g2" data-step="2" data-anim="rise">
+        <p class="guess-line">The capital of France is <span class="blank"><span class="q">?</span><b>Paris</b></span></p>
+        <div class="cands" data-step="3" data-anim="fade">
+          <span class="cand">Paris <i style="--p:.99"></i><em>99%</em></span>
+          <span class="cand">Lyon <i style="--p:.006"></i><em>&lt;1%</em></span>
+          <span class="cand">London <i style="--p:.004"></i><em>&lt;1%</em></span>
+        </div>
+      </div>
+      <div class="guess g3" data-step="4" data-anim="rise">
+        <p class="guess-line">The best major on campus is <span class="blank"><span class="reel"><span><b>Business</b><b>Design</b><b>Law</b><b>Biology</b><b>Finance</b><b>Media</b><b>CS</b><b>English</b></span></span></span></p>
+        <div class="cands is-shown">
+          <span class="cand">??? <i></i><em>9%</em></span>
+          <span class="cand">??? <i></i><em>9%</em></span>
+          <span class="cand">??? <i></i><em>8%</em></span>
+        </div>
+      </div>
+    </div>
+    <div class="punch punch--l"><p class="pill" data-step="5" data-anim="pop">Clear prompt, one answer. Vague prompt, a guess.</p></div>
+
+    <aside class="notes">
+      <p><strong>Finish my sentence</strong> (40 seconds, voices only). Read each line, cue the room with your hand, they shout the last word.</p>
+      <ul>
+        <li>"Twinkle, twinkle, little…" → one loud answer → click (reveals star).</li>
+        <li>Click (new line). "The capital of France is…" → one loud answer → click (reveals Paris).</li>
+        <li>Click (new line). "The best major on campus is…" → chaos. Let it spin for a few seconds, then click for the punchline.</li>
+      </ul>
+      <p><strong>Punchline:</strong> You just did what ChatGPT does: predict the next word from everything you have ever read. When I was clear, you agreed. When I was vague, you guessed. So does it.</p>
+      <p>This is how chat AI works. Image tools work differently; we get to them later.</p>
+      <p>Remember that feeling. You are about to be the AI again.</p>
+    </aside>
+  </section>
+
+  <!-- ===================================================== 3 · DRAW A HOUSE, ROUND 1 -->
+  <section class="slide s-game" data-title="Draw a house — round one" data-scene="burst" data-sun="960,420,.32" data-transition="stripes" data-minutes="2">
+    <div class="game-title">
+      <div data-anim="slam" data-delay="350">
+        <span class="display">Draw a</span>
+        <span class="display display--amber">House</span>
+      </div>
+    </div>
+
+    <div class="game-ring" data-anim="rise" data-delay="900">
+      <div class="wings">
+        <span class="wing wing--l"><i></i><i></i><i></i></span>
+        <button class="countdown" data-seconds="20"></button>
+        <span class="wing wing--r"><i></i><i></i><i></i></span>
+      </div>
+    </div>
+
+    <div class="game-pill">
+      <p class="pill gp-0" data-anim="pop" data-delay="1250">20 seconds. No questions.</p>
+      <p class="pill gp-1" data-step="1" data-anim="pop">Hold it up. Look around.</p>
+      <p class="pill gp-2" data-step="2" data-anim="pop">Every house is different. Whose fault is that?</p>
+    </div>
+
+    <aside class="notes">
+      <p><strong>Do not explain the point.</strong> Say only: "Draw a house. Twenty seconds." Refuse every question with a smile. Press <strong>T</strong>.</p>
+      <ul>
+        <li>Timer ends → click: "Hold it up. Look left, look right."</li>
+        <li>Click: "Every house is different. Whose fault is that?" <strong>Do not describe your house yet.</strong></li>
+      </ul>
+      <p>No paper? A finger in the phone Notes app works.</p>
+    </aside>
+  </section>
+
+  <!-- ===================================================== 4 · DRAW A HOUSE, ROUND 2 -->
+  <section class="slide s-round2" data-title="Draw a house — round two" data-scene="burst" data-sun="1510,600,.3" data-transition="push" data-minutes="2.5">
+    <div class="r2-head" data-anim="left">
+      <h2 class="display">Round <span class="display--amber" style="text-shadow:var(--extrude-dark)">two</span></h2>
+    </div>
+
+    <div class="prompt r2-brief" data-anim="rise" data-nocopy data-nosheet>
+      <div class="prompt-bar"><span class="prompt-label">Same house. Four sentences.</span></div>
+      <p class="brief-line" data-anim="wipe" data-delay="800">This is for a children's storybook about a village that floods.</p>
+      <p class="brief-line" data-step="1" data-anim="wipe">You are a cartoonist: simple, bold lines.</p>
+      <p class="brief-line" data-step="2" data-anim="wipe">Draw one tall, thin house on four stilts, with one round window and a flag on the roof.</p>
+      <p class="brief-line" data-step="3" data-anim="wipe">Fill the whole page. No shading. 40 seconds.</p>
+    </div>
+
+    <div class="r2-side">
+      <div class="r2-timer" data-anim="pop" data-delay="600"><button class="countdown" data-seconds="40"></button></div>
+      <div data-step="4" data-anim="tilt">
+        <div class="paper">
+          <span class="label">The house in my head</span>
+          <svg class="house" viewBox="0 0 400 420" aria-hidden="true">
+            <path pathLength="1" style="--k:0" d="M152 292V128h96v164Z"/>
+            <path pathLength="1" style="--k:1" d="M138 130l62-72 62 72"/>
+            <circle pathLength="1" style="--k:2" cx="200" cy="184" r="23"/>
+            <path pathLength="1" style="--k:3" d="M200 58V12"/>
+            <path pathLength="1" class="hf" style="--k:4" d="M200 13l44 13-44 14Z"/>
+            <path pathLength="1" style="--k:5" d="M164 292l-12 100M190 292l-4 100M210 292l4 100M236 292l12 100"/>
+            <path pathLength="1" class="hw" style="--k:6" d="M70 386c20-14 40-14 60 0s40 14 60 0 40-14 60 0 40 14 60 0"/>
+            <path pathLength="1" class="hw" style="--k:7" d="M90 408c20-12 40-12 60 0s40 12 60 0 40-12 60 0"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="punch punch--l"><p class="pill" data-step="5" data-anim="pop">Same artists. Better prompt.</p></div>
+
+    <aside class="notes">
+      <p>Sentence 1 is already up. Read it, then click <strong>three</strong> times, reading each new sentence slowly. <strong>Do not click again:</strong> press <strong>T</strong> for 40 seconds. The next click reveals the answer.</p>
+      <p>Timer ends → "Hold them up." The room is now full of near-identical houses. <strong>Stay silent for five seconds.</strong> Then click: this is the house that was in my head the whole time.</p>
+      <p><strong>Debrief:</strong> "After round one, what did you want to ask me?" Take three shouts (what kind, for who, how big).</p>
+      <p><strong>Punchline:</strong> You did not get more talented in 40 seconds. My instructions got better. AI cannot see the picture in my head, and it never gets to ask. The questions you wanted to ask <em>are</em> the prompt.</p>
+    </aside>
+  </section>
+
+  <!-- ===================================================== 5 · ART, IN A FRAME -->
+  <section class="slide s-art" data-title="ART, in a frame" data-scene="night" data-sun="1500,1310,1.2" data-transition="sun" data-minutes="2">
+    <p class="eyebrow eyebrow--bare art-eyebrow" data-anim="fade"><span>The four lines you just obeyed</span></p>
+
+    <div class="art-rows">
+      <div class="art-row" data-anim="left"><span class="stamp" data-step="1" data-anim="slam">Audience</span><p>This is for a children's storybook about a village that floods.</p></div>
+      <div class="art-row" data-anim="left"><span class="stamp" data-step="2" data-anim="slam">Role</span><p>You are a cartoonist: simple, bold lines.</p></div>
+      <div class="art-row" data-anim="left"><span class="stamp" data-step="3" data-anim="slam">Task</span><p>Draw one tall, thin house on four stilts, with one round window and a flag.</p></div>
+      <div class="art-row" data-anim="left"><span class="stamp" data-step="4" data-anim="slam">Frame</span><p>Fill the whole page. No shading. 40 seconds.</p></div>
+    </div>
+
+    <div class="art-mark">
+      <svg viewBox="0 0 580 500" data-step="4" data-plain aria-hidden="true"><path pathLength="1" d="M44 6H536L574 44V456L536 494H44L6 456V44Z"/></svg>
+      <div class="art-letters" aria-label="ART">
+        <span class="display" data-step="1" data-anim="slam">A</span>
+        <span class="display" data-step="2" data-anim="slam">R</span>
+        <span class="display" data-step="3" data-anim="slam">T</span>
+      </div>
+    </div>
+    <p class="art-cap" data-step="4" data-anim="fade"><span class="label">…in a frame</span></p>
+
+    <div class="punch punch--l"><p class="pill" data-step="5" data-anim="pop">Four lines. Then talk back.</p></div>
+
+    <aside class="notes">
+      <p>Name the four sentences they just obeyed, one click each:</p>
+      <ul>
+        <li><strong>Audience</strong> — who it is for and why. The context AI cannot see.</li>
+        <li><strong>Role</strong> — who the AI should be: tutor, coach, editor, cartoonist.</li>
+        <li><strong>Task</strong> — the one exact thing you want made.</li>
+        <li><strong>Frame</strong> — the shape of the answer: length, format, tone, limits.</li>
+      </ul>
+      <p>This workshop is The <strong>ART</strong> of AI Prompting. A, R, T, in a frame.</p>
+      <p>Last click: a good prompt is not one message. <strong>Reply. Push back. Ask for shorter, funnier, harder.</strong> Every prompt for the rest of the session starts from these four lines. Watch which ones each tool needs.</p>
+    </aside>
+  </section>
+
+  <!-- ===================================================== 6 · CHATGPT -->
+  <section class="slide s-tool" data-title="ChatGPT" data-scene="night" data-sun="470,520,.78" data-sun-at="1:960,1560,1.7" data-transition="fade" data-minutes="6">
+    <div class="tool-art"><div class="tile tile--hero" data-anim="tilt" data-idle="float" data-delay="250"><svg><use href="#g-chatgpt"/></svg><b>ChatGPT</b></div></div>
+    <div class="tool-head">
+      <p class="eyebrow eyebrow--bare" data-anim="fade" data-delay="350"><span>The all-rounder</span></p>
+      <h2 class="display tool-name" data-split data-delay="450">ChatGPT</h2>
+    </div>
+    <div class="tool-intro" data-anim="rise" data-delay="1000">
+      <p class="lead">One line versus four.</p>
+      <div class="chips"><span class="chip">Explain</span><span class="chip">Draft</span><span class="chip">Brainstorm</span></div>
+      <a class="launch" href="https://chatgpt.com" target="_blank" rel="noopener" data-name="Open ChatGPT">Open ChatGPT</a>
+    </div>
+    <div class="tool-timer" data-step="3" data-anim="pop"><button class="countdown" data-seconds="150"></button></div>
+
+    <div class="tool-work">
+      <div class="p-watch versus">
+        <div class="prompt mini" data-step="1" data-anim="rise" data-delay="500" data-nocopy data-nosheet>
+          <div class="prompt-bar"><span class="prompt-label">One line</span></div>
+          <div class="mini-body">
+            <p class="mini-q">Explain inflation.</p>
+            <div class="wall">
+              <i style="--k:6;width:96%"></i><i style="--k:7;width:100%"></i><i style="--k:8;width:91%"></i><i style="--k:9;width:98%"></i>
+              <i style="--k:10;width:64%"></i><i style="--k:11;width:100%"></i><i style="--k:12;width:94%"></i><i style="--k:13;width:99%"></i>
+              <i style="--k:14;width:88%"></i><i style="--k:15;width:42%"></i>
+            </div>
+          </div>
+        </div>
+        <div class="prompt mini" data-step="2" data-anim="rise" data-nocopy data-nosheet>
+          <div class="prompt-bar"><span class="prompt-label">Four lines</span></div>
+          <div class="mini-body">
+            <div class="four">
+              <p style="--k:0"><span>A</span>I'm a first-year with a quiz tomorrow.</p>
+              <p style="--k:1"><span>R</span>Act as the friendliest tutor on campus.</p>
+              <p style="--k:2"><span>T</span>Explain inflation with a food analogy.</p>
+              <p style="--k:3"><span>F</span>3 short sentences, then 1 question.</p>
+            </div>
+            <div class="tidy">
+              <div class="wall"><i style="--k:10;width:92%"></i><i style="--k:11;width:100%"></i><i style="--k:12;width:70%"></i></div>
+              <b>?</b>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-turn" data-step="3" data-anim="rise">
+        <p class="cue">1 · Send: <b>Explain [one concept from a course you take].</b></p>
+        <p class="cue">2 · New chat. Send this:</p>
+        <div class="prompt">
+          <div class="prompt-bar"><span class="prompt-label">Your turn · everyone</span><button class="prompt-copy" type="button">Copy</button></div>
+          <p class="prompt-text" data-type>I have a quiz tomorrow and [your concept] confuses me. Act as a friendly tutor. Explain it with a food analogy in 3 short sentences, then ask me 1 question.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="punch"><p class="pill" data-step="4" data-anim="pop">Same AI. Same you. Four lines.</p></div>
+
+    <aside class="notes">
+      <p><strong>Move taught here: the four lines.</strong> Press <strong>D</strong> to open ChatGPT.</p>
+      <p><strong>Demo (90 s):</strong></p>
+      <ul>
+        <li>New chat. Type <code>Explain inflation.</code> Scroll the wall of text: "Correct. And useless at 1 AM before a quiz."</li>
+        <li>New chat. Paste: <code>I have a quiz tomorrow and inflation confuses me. Act as a friendly tutor. Explain it with a food analogy in 3 short sentences, then ask me 1 question.</code> Read the answer aloud and point at each prompt line: audience, role, task, frame.</li>
+        <li>Answer its check question <em>wrong on purpose</em>. It corrects you kindly. "It is a conversation, not a search box."</li>
+      </ul>
+      <p><strong>Your turn (150 s, press T):</strong> click to the Your turn step (C copies the prompt). Everyone sends shot 1, looks at the wall, then shot 2 with their own concept. Behind on time? Skip the wrong-answer follow-up in the demo. Last 45 s: read your food analogy to your neighbour. Take two shouted from the room.</p>
+      <p><strong>Fallback:</strong> if ChatGPT is slow, use the same two prompts in Claude or Gemini. The lesson is the prompt, not the tool.</p>
+      <p>Text chat on a free account is the safest thing in the whole session. Do not mention model names on stage; they change monthly.</p>
+    </aside>
+  </section>
+
+  <!-- ===================================================== 7 · CLAUDE -->
+  <section class="slide s-tool s-tool--r" data-title="Claude" data-scene="night" data-sun="1450,520,.78" data-sun-at="1:960,1560,1.7" data-transition="push" data-minutes="5.5">
+    <div class="tool-art"><div class="tile tile--hero" data-anim="tilt" data-idle="float" data-delay="250"><svg><use href="#g-claude"/></svg><b>Claude</b></div></div>
+    <div class="tool-head">
+      <p class="eyebrow eyebrow--bare" data-anim="fade" data-delay="350"><span>The thinking partner</span></p>
+      <h2 class="display tool-name" data-split data-delay="450">Claude</h2>
+    </div>
+    <div class="tool-intro" data-anim="rise" data-delay="1000">
+      <p class="lead">Make it interview you.</p>
+      <div class="chips"><span class="chip">Write</span><span class="chip">Reason</span><span class="chip">Long documents</span></div>
+      <a class="launch" href="https://claude.ai" target="_blank" rel="noopener" data-name="Open Claude">Open Claude</a>
+    </div>
+    <div class="tool-timer" data-step="3" data-anim="pop"><button class="countdown" data-seconds="150"></button></div>
+
+    <div class="tool-work">
+      <div class="p-watch pong">
+        <p class="bub bub--me" data-step="1" data-anim="pop" data-delay="500">Essay due Friday. Coach me.</p>
+        <p class="bub bub--ai" data-step="1" data-anim="pop" data-delay="1100">Three questions first <b>?</b><b>?</b><b>?</b></p>
+        <p class="bub bub--me" data-step="2" data-anim="pop" data-delay="0">Here are my answers…</p>
+        <div class="plan" data-step="2" data-anim="flip" data-delay="520"><i style="--w:78%"></i><i style="--w:60%"></i><i style="--w:86%"></i><i style="--w:52%"></i><i style="--w:70%"></i></div>
+      </div>
+
+      <div class="p-turn" data-step="3" data-anim="rise">
+        <p class="cue">No Claude account? <b>Same prompt in ChatGPT.</b></p>
+        <div class="prompt">
+          <div class="prompt-bar"><span class="prompt-label">Your turn · everyone</span><button class="prompt-copy" type="button">Copy</button></div>
+          <p class="prompt-text" data-type>This week I have to [one real thing]. Act as my study coach. First ask me 3 questions that would change your advice, then wait.</p>
+        </div>
+        <p class="cue">Answer it. Then send:</p>
+        <div class="prompt" data-label="Then send">
+          <p class="prompt-text" style="padding-top:24px;padding-bottom:28px">Now give me a plan as a table, 5 rows max.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="punch"><p class="pill" data-step="4" data-anim="pop">Let it ask. Then talk back.</p></div>
+
+    <aside class="notes">
+      <p><strong>Move taught here: the second message matters most.</strong> Press <strong>D</strong> to open Claude.</p>
+      <p><strong>Demo (90 s):</strong> click to the Your turn step first: <strong>C</strong> copies the prompt, <strong>C</strong> again copies the follow-up. Paste it with a real task of yours. Read its three questions out loud: they are the things a good tutor would ask. Answer in one line each, then send the follow-up for a one-screen plan.</p>
+      <p><strong>Your turn (150 s, press T):</strong> same prompt, whole room. <strong>No Claude account? Stay in ChatGPT, same prompt.</strong> With 45 s left: "Send the follow-up." At the end: "Tell us the smartest question it asked you."</p>
+      <p><strong>Heads-up:</strong> Claude sign-up asks for phone verification, so do not make new accounts a requirement. The free allowance is small: do not rehearse on this account right before the session.</p>
+      <p><strong>Keep the plan it gives you on screen</strong> — you paste it into Napkin on the next slide.</p>
+    </aside>
+  </section>
+
+  <!-- ===================================================== 8 · NAPKIN AI + CHATPDF -->
+  <section class="slide s-duo" data-title="Napkin AI + ChatPDF" data-scene="night" data-sun="960,600,.62" data-sun-at="3:960,1560,1.7" data-transition="pixels" data-minutes="5.5">
+    <div class="duo-head"><h2 class="display" data-split>Read smarter. See more.</h2></div>
+    <p class="duo-mid duo-mid--plus" data-anim="pop" data-delay="1100" aria-hidden="true">+</p>
+
+    <div class="duo-a">
+      <div class="duo-tool">
+        <div class="tile" data-anim="tilt" data-idle="float" data-delay="700"><svg><use href="#g-napkin"/></svg><b>Napkin AI</b></div>
+        <p class="lead" data-anim="rise" data-delay="1000">Words become pictures.</p>
+        <p class="cue" data-step="1" data-anim="fade">paste text · tap the spark</p>
+        <a class="launch" data-anim="rise" data-delay="1150" href="https://app.napkin.ai" target="_blank" rel="noopener" data-name="Open Napkin AI">Open Napkin</a>
+      </div>
+      <div class="duo-tool">
+        <div class="tile" data-anim="tilt" data-idle="float" data-delay="850" style="--idle-dur:8.4s"><svg><use href="#g-chatpdf"/></svg><b>ChatPDF</b></div>
+        <p class="lead" data-anim="rise" data-delay="1100">Ask. Then check the page.</p>
+        <p class="cue" data-step="2" data-anim="fade">drop a PDF · ask · check</p>
+        <a class="launch" data-anim="rise" data-delay="1250" href="https://www.chatpdf.com" target="_blank" rel="noopener" data-name="Open ChatPDF">Open ChatPDF</a>
+      </div>
+    </div>
+
+    <div class="duo-b" data-step="3" data-anim="rise" data-delay="350">
+      <div>
+        <p class="cue">Open <b>chatpdf.com</b>. Upload any PDF from one of your courses. Send:</p>
+        <div class="prompt">
+          <div class="prompt-bar"><span class="prompt-label">Your turn · quiz your PDF</span><button class="prompt-copy" type="button">Copy</button></div>
+          <p class="prompt-text" data-type>Using only this document, write the 5 most likely exam questions. After each, give a one-sentence answer and its page number.</p>
+        </div>
+        <p class="cue">Tap one page number. <b>Stand up if the answer really was on that page.</b></p>
+      </div>
+      <button class="countdown" data-seconds="150"></button>
+    </div>
+
+    <div class="punch"><p class="pill" data-step="4" data-anim="pop">It sounds sure even when it's wrong. Make it show the page.</p></div>
+
+    <aside class="notes">
+      <p><strong>Napkin AI (60 s, press D):</strong> paste the study plan Claude just made. Click the spark icon beside the paragraph, pick a visual, switch its style once. "Your chatbot can describe a diagram. Napkin gives you one you can edit and put on a slide."</p>
+      <p><strong>ChatPDF + your turn (150 s, press Shift+D, then click, then T):</strong> upload your own short PDF while the room uploads theirs, and send the same prompt. Narrate what you are doing. At the end <strong>click one page number</strong> on your screen so they see it jump, then: "Tap one of yours. Stand up if the answer really was on that page."</p>
+      <p><strong>Heads-up:</strong> ChatPDF's free plan allows only a couple of documents a day: do not rehearse on stage-day with the same browser. Phones without a PDF handy can pair up. Scanned image PDFs give poor results.</p>
+      <p><strong>Fallback:</strong> ChatGPT and Claude can both read an uploaded PDF. Same prompt works there.</p>
+    </aside>
+  </section>
+
+  <!-- ===================================================== 9 · REPLIT + LOVABLE -->
+  <section class="slide s-duo" data-title="Replit + Lovable" data-scene="night" data-sun="960,600,.62" data-sun-at="3:960,1560,1.7" data-transition="push" data-minutes="5.5">
+    <div class="duo-head"><h2 class="display" data-split>Describe it. It gets built.</h2></div>
+    <p class="duo-mid duo-mid--plus" data-anim="pop" data-delay="1100" aria-hidden="true">+</p>
+
+    <div class="duo-a">
+      <div class="duo-tool">
+        <div class="tile" data-anim="tilt" data-idle="float" data-delay="700"><svg><use href="#g-replit"/></svg><b>Replit</b></div>
+        <p class="lead" data-anim="rise" data-delay="1000">Builds and runs the app.</p>
+        <p class="cue" data-step="1" data-anim="fade">plans · writes · runs it</p>
+        <a class="launch" data-anim="rise" data-delay="1150" href="https://replit.com" target="_blank" rel="noopener" data-name="Open Replit">Open Replit</a>
+      </div>
+      <div class="duo-tool">
+        <div class="tile" data-anim="tilt" data-idle="float" data-delay="850" style="--idle-dur:8.4s"><svg><use href="#g-lovable"/></svg><b>Lovable</b></div>
+        <p class="lead" data-anim="rise" data-delay="1100">A site from one prompt.</p>
+        <p class="cue" data-step="2" data-anim="fade">describe it · watch it appear</p>
+        <a class="launch" data-anim="rise" data-delay="1250" href="https://lovable.dev" target="_blank" rel="noopener" data-name="Open Lovable">Open Lovable</a>
+      </div>
+    </div>
+
+    <div class="duo-b" data-step="3" data-anim="rise" data-delay="350">
+      <div>
+        <p class="cue">While mine builds, write yours. Paper or phone notes.</p>
+        <div class="prompt">
+          <div class="prompt-bar"><span class="prompt-label">Your turn · brief your app</span><button class="prompt-copy" type="button">Copy</button></div>
+          <p class="prompt-text" data-type>Build a simple web app for [who] that [does one thing]. It needs [feature 1], [feature 2] and [feature 3]. Make it look [style].</p>
+        </div>
+        <p class="cue">Read it to your neighbour. <b>Paste it into Lovable tonight.</b></p>
+      </div>
+      <button class="countdown" data-seconds="90"></button>
+    </div>
+
+    <div class="punch"><p class="pill" data-step="4" data-anim="pop">You didn't write code. You wrote a brief.</p></div>
+
+    <aside class="notes">
+      <p><strong>Rule: no spinner ever owns the room.</strong> Fire the slow thing first, then give the room a task while it cooks.</p>
+      <ul>
+        <li>Click twice so both cards have appeared. <strong>Lovable (press Shift+D):</strong> paste <code>Build a simple web app for students in a group project that shows who is doing what. It needs a task list, a name beside each task and a progress bar. Make it look bold and retro.</code> Show the first 20 seconds of it generating.</li>
+        <li><strong>Replit (press D):</strong> start the same prompt, show the agent planning for 20 seconds, then switch to <strong>last night's finished tab</strong> and use the app.</li>
+        <li><strong>Your turn (90 s, press T):</strong> everyone fills in the blanks for an app they wish existed for student life, then reads it to a neighbour.</li>
+        <li>Come back to the Lovable tab: it is usually done. Ask one follow-up live: "Make the button orange."</li>
+      </ul>
+      <p><strong>Heads-up:</strong> both need an account and have small free daily allowances. Build the backups the night before, not the same morning. Free Lovable projects are public: no personal data in the demo.</p>
+      <p><strong>Fallback:</strong> students without accounts can paste the same sentence into ChatGPT or Claude and ask for "a working one-page web app I can use right here in this chat."</p>
+    </aside>
+  </section>
+
+  <!-- ===================================================== 10 · NANO BANANA + CHATGPT IMAGES -->
+  <section class="slide s-duo" data-title="Nano Banana + ChatGPT Images" data-scene="night" data-sun="960,600,.62" data-sun-at="3:960,1560,1.7" data-transition="zoom" data-minutes="5.5">
+    <div class="duo-head"><h2 class="display" data-split>Same prompt. Two artists.</h2></div>
+    <p class="duo-mid" data-anim="pop" data-delay="1100" aria-hidden="true">VS</p>
+
+    <div class="duo-a">
+      <div class="duo-tool">
+        <div class="tile" data-anim="tilt" data-idle="float" data-delay="700"><svg><use href="#g-banana"/></svg><b>Nano Banana</b></div>
+        <p class="lead" data-anim="rise" data-delay="1000">Edit by chatting.</p>
+        <p class="cue" data-step="1" data-anim="fade">Gemini → Tools → Create images</p>
+        <a class="launch" data-anim="rise" data-delay="1150" href="https://gemini.google.com" target="_blank" rel="noopener" data-name="Open Gemini (Nano Banana)">Open Gemini</a>
+      </div>
+      <div class="duo-tool">
+        <div class="tile" data-anim="tilt" data-idle="float" data-delay="850" style="--idle-dur:8.4s"><svg><use href="#g-images"/></svg><b>ChatGPT Images</b></div>
+        <p class="lead" data-anim="rise" data-delay="1100">Text you can read.</p>
+        <p class="cue" data-step="2" data-anim="fade">chatgpt.com · Create image</p>
+        <a class="launch" data-anim="rise" data-delay="1250" href="https://chatgpt.com/images" target="_blank" rel="noopener" data-name="Open ChatGPT Images">Open ChatGPT</a>
+      </div>
+    </div>
+
+    <div class="duo-b" data-step="3" data-anim="rise" data-delay="350">
+      <div>
+        <p class="cue">In ChatGPT or Gemini (<b>Tools → Create images</b>). Send:</p>
+        <div class="prompt">
+          <div class="prompt-bar"><span class="prompt-label">Your turn · poster premiere</span><button class="prompt-copy" type="button">Copy</button></div>
+          <p class="prompt-text" data-type>Make a retro movie poster titled "[YOUR MAJOR]: THE MOVIE". One dramatic scene from a [your major] student's exam week. Tagline at the bottom: "[3 words]".</p>
+        </div>
+        <p class="cue">Then send:</p>
+        <div class="prompt prompt--sm" data-label="Then send">
+          <p class="prompt-text">Keep everything the same, but add one unimpressed cat.</p>
+        </div>
+        <div class="chips"><span class="chip">Subject</span><span class="chip">Style</span><span class="chip">Light</span><span class="chip">Text</span></div>
+      </div>
+      <button class="countdown" data-seconds="150"></button>
+    </div>
+
+    <div class="punch"><p class="pill" data-step="4" data-anim="pop">An edit is a second prompt, not a restart.</p></div>
+
+    <aside class="notes">
+      <p><strong>Fire both first, then talk.</strong> Paste the same poster prompt into Gemini (choose <strong>Tools → Create images</strong> first) and into ChatGPT. Narrate the prompt's parts while they render: subject, style, light, text.</p>
+      <p><strong>Your turn (150 s, press T):</strong> start the room as soon as your own two posters are rendering. Everyone uses whichever of the two they are already signed in to. At 90 s: "Send the cat." At zero: <strong>"Phones up, show the row behind you."</strong></p>
+      <p>Two questions for the room: which side spelled the title right? Whose poster changed least when the cat arrived?</p>
+      <p><strong>Heads-up:</strong> free image limits are tiny and unpublished on both. Many students will be blocked after two or three images: tell them to pair up. <strong>Generate your own two posters the night before</strong> and keep them in a tab. Do not use a student's real photo.</p>
+      <p>Say "Nano Banana in the Gemini app". It is not "Gemini Nano", which is a different, on-device model.</p>
+    </aside>
+  </section>
+
+  <!-- ===================================================== 11 · CLAUDE CODE + CODEX -->
+  <section class="slide s-agents" data-title="Claude Code + Codex" data-scene="night" data-sun="960,1180,1.5" data-sun-at="1:960,1560,1.7" data-transition="pixels" data-minutes="4.5">
+    <div class="ag-head"><h2 class="display" data-split>Don't chat. Delegate.</h2></div>
+
+    <div class="prompt ag-prompt" data-step="1" data-anim="rise" data-delay="300">
+      <div class="prompt-bar"><span class="prompt-label">The room writes the spec</span><button class="prompt-copy" type="button">Copy</button></div>
+      <p class="prompt-text" data-type>In playground.html, add a big button labelled "[the room's word]". When clicked, it fires confetti in [the room's colour] across the screen. Do not touch any other file. When you are done, tell me what you changed in two sentences.</p>
+    </div>
+
+    <div class="ag-panes">
+      <div class="prompt pane" data-anim="left" data-delay="800" data-nocopy data-nosheet>
+        <div class="prompt-bar"><span class="prompt-label">Claude Code</span><a class="launch" href="https://claude.ai/code" target="_blank" rel="noopener" data-name="About Claude Code">Open</a></div>
+        <div class="pane-body">
+          <p class="dim">&gt; waiting for the spec<span class="q"> _</span></p>
+          <div data-step="2" data-plain>
+            <p style="--k:0">● reading playground.html</p>
+            <p style="--k:1">● editing 1 file</p>
+            <p style="--k:2">● running it in the browser</p>
+            <p style="--k:3" class="ok">✓ done · 0 other files touched</p>
+          </div>
+        </div>
+      </div>
+      <div class="prompt pane" data-anim="right" data-delay="800" data-nocopy data-nosheet>
+        <div class="prompt-bar"><span class="prompt-label">Codex</span><a class="launch" href="https://chatgpt.com/download" target="_blank" rel="noopener" data-name="About Codex">Open</a></div>
+        <div class="pane-body" style="--pace:650ms">
+          <p class="dim">&gt; waiting for the spec<span class="q"> _</span></p>
+          <div data-step="2" data-plain>
+            <p style="--k:0">● reading playground.html</p>
+            <p style="--k:1">● editing 1 file</p>
+            <p style="--k:2">● checking the result</p>
+            <p style="--k:3" class="ok">✓ done · 0 other files touched</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="punch"><p class="pill" data-step="3" data-anim="pop">The task. The limits. What done looks like.</p></div>
+
+    <aside class="notes">
+      <p><strong>From chatting to doing.</strong> A chatbot gives you words. An agent opens your files and changes them.</p>
+      <p><strong>Shout the spec (45 s, voices only):</strong> the first clean word you hear becomes the button label. Cheer-vote between two shouted colours for the confetti. You type; the room is the product manager.</p>
+      <p><strong>Demo:</strong> the project has two sandbox copies ready: <code>demo/claude/playground.html</code> and <code>demo/codex/playground.html</code>. Open each folder in its agent, paste the same spec into both, and let them race. Open each result in the browser and click the button.</p>
+      <p>Point out that the agent <strong>asks permission</strong> before it edits. Do not click through silently.</p>
+      <p><strong>Heads-up:</strong> Claude Code needs a paid plan, and Codex now lives inside the ChatGPT desktop app. This is a presenter demo, not a room activity. Log in to both before the session and keep a 40-second screen recording as a backup. <strong>More than 3 minutes behind when you arrive here? Play the recording instead of the live race.</strong></p>
+      <p><strong>Punchline:</strong> with agents your prompt is a job description: the task, the limits, and what done looks like.</p>
+    </aside>
+  </section>
+
+  <!-- ===================================================== 12 · RIGHT TOOL, RIGHT JOB -->
+  <section class="slide s-pick" data-title="Right tool. Right job." data-scene="burst" data-sun="960,250,.3" data-transition="stripes" data-minutes="1.5" data-steps="16">
+    <div class="pick-head" data-anim="slam"><h2 class="display">Right tool.<span class="display--amber" style="text-shadow:var(--extrude-dark)"> Right job.</span></h2></div>
+
+    <div class="prompt pick-bar" data-anim="rise" data-nocopy data-nosheet>
+      <p class="prompt-text" id="pick-job">Explain this topic to me. It's 1 AM.</p>
+    </div>
+
+    <div class="pick-grid">
+      <div class="tile tile--card pk" data-job="1" data-anim="pop"><svg><use href="#g-chatgpt"/></svg><b>ChatGPT</b></div>
+      <div class="tile tile--card pk" data-job="2" data-anim="pop"><svg><use href="#g-claude"/></svg><b>Claude</b></div>
+      <div class="tile tile--card pk" data-job="3" data-anim="pop"><svg><use href="#g-napkin"/></svg><b>Napkin AI</b></div>
+      <div class="tile tile--card pk" data-job="4" data-anim="pop"><svg><use href="#g-chatpdf"/></svg><b>ChatPDF</b></div>
+      <div class="tile tile--card pk" data-job="5" data-anim="pop"><svg><use href="#g-replit"/></svg><b>Replit</b></div>
+      <div class="tile tile--card pk" data-job="5" data-anim="pop"><svg><use href="#g-lovable"/></svg><b>Lovable</b></div>
+      <div class="tile tile--card pk" data-job="6" data-anim="pop"><svg><use href="#g-banana"/></svg><b>Nano Banana</b></div>
+      <div class="tile tile--card pk" data-job="6" data-anim="pop"><svg><use href="#g-images"/></svg><b>ChatGPT Images</b></div>
+      <div class="tile tile--card pk" data-job="7" data-anim="pop"><svg><use href="#g-terminal"/></svg><b>Claude Code</b></div>
+      <div class="tile tile--card pk" data-job="7" data-anim="pop"><svg><use href="#g-codex"/></svg><b>Codex</b></div>
+      <div class="tile tile--card pk" data-job="8" data-anim="pop"><svg><use href="#g-gamma"/></svg><b>Gamma</b></div>
+    </div>
+
+    <aside class="notes">
+      <p><strong>Rapid fire (90 s, voices only).</strong> You read the job, the room shouts the tool, you click and the answer lights up. Two clicks per job: question, answer.</p>
+      <ul>
+        <li>Explain a topic at 1 AM → ChatGPT</li>
+        <li>Poke holes in my essay plan → Claude</li>
+        <li>Notes into one diagram → Napkin AI</li>
+        <li>60-page reading, where does it say that → ChatPDF</li>
+        <li>A sign-up site for our club tonight → Lovable or Replit</li>
+        <li>The event poster → Nano Banana or ChatGPT Images</li>
+        <li>A bug spread across 20 files → Claude Code or Codex</li>
+        <li>Bonus, slides for tomorrow → Gamma (one sentence: paste an outline, get a deck)</li>
+      </ul>
+      <p><strong>Punchline:</strong> there is no best tool. There is the right one for the job, and in every one of them the prompt carries the picture in your head.</p>
+      <p>Behind on time? Do four jobs, then type <strong>13</strong> and press <strong>Enter</strong> (or Fn+→ on a MacBook) to jump to the closing slide.</p>
+    </aside>
+  </section>
+
+  <!-- ===================================================== 13 · CLOSING -->
+  <section class="slide s-close" data-title="Now go prompt something" data-scene="dusk" data-sun="1580,1220,1.42" data-transition="sun" data-minutes="2">
+    <div class="close-head">
+      <span class="display" data-split>Now go prompt</span>
+      <span class="display display--amber" data-split data-delay="800">something.</span>
+    </div>
+
+    <div class="prompt close-card" data-step="1" data-anim="rise">
+      <div class="prompt-bar"><span class="prompt-label">Exit prompt · send it before you stand up</span><button class="prompt-copy" type="button">Copy</button></div>
+      <p class="prompt-text" data-type>This is for [who], because [why I need it].
+Act as [who the AI should be].
+I need you to [the exact thing].
+Give it to me as [format], no longer than [length].
+Before you answer, ask me anything you need to know.</p>
+    </div>
+
+    <div class="close-side" data-anim="fade" data-delay="1500">
+      <span class="brandmark">H<small>ac</small>AUK</span>
+      <p class="lead">Thank you.</p>
+      <span class="label">Presenter</span>
+      <b class="name">Aiyhm Mahir</b>
+    </div>
+    <div class="qr close-qr" data-anim="pop" data-delay="1900">
+      <div class="plaque"><div class="qr-in"><img src="../../assets/img/qr-prompts.svg" alt="QR code to the prompt sheet"><span>Keep the prompts</span></div></div>
+    </div>
+
+    <div class="punch punch--l"><p class="pill" data-step="2" data-anim="pop">The picture is in your head. Put it in the prompt.</p></div>
+
+    <aside class="notes">
+      <p><strong>Exit prompt (60 s):</strong> fill in the template for one thing you genuinely have to do this week, in any tool, and press send before you stand up.</p>
+      <p>The four lines are the same ones from the house: audience, role, task, frame. The fifth line is "talk back", built in.</p>
+      <p><strong>Last words:</strong> the picture is in your head. Put it in the prompt.</p>
+      <p>Thank the room, point to the next HacAUK session, and take questions.</p>
+    </aside>
+  </section>
+
+</main>
+
+<script src="../../assets/js/world.js"></script>
+<script src="../../assets/js/fx.js"></script>
+<script src="../../assets/js/engine.js"></script>
+<script>
+/* Slide 12: one click shows a job, the next click lights up the tool for it. */
+(function () {
+  var slide = document.querySelector('.s-pick'); if (!slide) return;
+  var JOBS = [
+    "Explain this topic to me. It's 1 AM.",
+    "Poke holes in my essay plan.",
+    "Turn my notes into one diagram.",
+    "60-page reading. Where does it say that?",
+    "Our club needs a sign-up site tonight.",
+    "Make the event poster.",
+    "Fix a bug spread across 20 files.",
+    "Slides for tomorrow morning.",
+    "No best tool. Only the right one."
+  ];
+  var bar = document.getElementById('pick-job');
+  var tiles = Array.prototype.slice.call(slide.querySelectorAll('.pk'));
+  var shown = -1;
+  function paint(at, typeIt) {
+    var q = Math.min(JOBS.length - 1, Math.floor(at / 2));
+    var answered = at % 2 === 1 && q < JOBS.length - 1;
+    if (q !== shown) {
+      shown = q; bar.dataset.full = JOBS[q];
+      typeIt ? HacAUKFx.type(bar, 80) : HacAUKFx.showFull(bar);
+    }
+    slide.classList.toggle('is-answer', answered);
+    tiles.forEach(function (t) { t.classList.toggle('is-lit', answered && +t.getAttribute('data-job') === q + 1); });
+  }
+  slide.addEventListener('deck:enter', function (e) { shown = -1; paint(e.detail.step, !e.detail.back); });
+  slide.addEventListener('deck:step', function (e) { paint(e.detail.step, e.detail.step > e.detail.prev); });
+})();
+</script>
+</body>
+</html>

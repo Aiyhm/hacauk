@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New deck — HacAUK</title>
+<link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Titan+One&family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;1,400;1,500&family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../assets/css/system.css">
+<link rel="stylesheet" href="../../assets/css/deck.css">
+<style>
+  /* Layouts for this deck. The stage is always 1920 x 1080. */
+  .t-display { font-size: 210px; }
+  .t-wide { max-width: 1500px; }
+  .gap { height: 44px; }
+</style>
+</head>
+<body>
+
+<!--
+  HOW A DECK WORKS
+  Every <section class="slide"> is one slide. Useful attributes:
+
+    data-title="..."        name shown in the overview, speaker view and prompt sheet
+    data-scene="night"      night (default) | burst (retro sunburst, use for activities) | dusk | void
+    data-sun="x,y,scale"    where the sun sits on the 1920x1080 stage
+    data-sun-at="1:x,y,s"   move the sun when build step 1 is reached
+    data-transition="sun"   fade (default) | sun | stripes | pixels | zoom | push
+    data-minutes="3"        planned time, used by the pace clock
+
+  Inside a slide:
+
+    data-anim="rise"        entrance: rise drop left right fade pop zoom slam spin wipe flip tilt
+    data-step="1"           hold the element until the first click (2 = second click, ...)
+    data-delay="600"        entrance delay in ms (otherwise elements stagger in page order)
+    data-idle="float"       gentle loop after the entrance: float bob sway pulse
+    data-split              animate a title letter by letter
+    data-type               type the text out (use on a .prompt-text)
+    <button class="countdown" data-seconds="60"></button>    activity timer (T starts it)
+    <a class="launch" href="...">Open tool</a>               live demo link (D opens it)
+    <aside class="notes">...</aside>                          speaker notes (S opens the speaker view)
+-->
+
+<main class="deck" data-deck="my-new-deck" data-title="My new deck" data-home="../../index.html">
+
+  <section class="slide" data-title="Title" data-scene="night" data-sun="960,760,1" data-minutes="1">
+    <p class="eyebrow" data-anim="fade"><span>HacAUK presents</span></p>
+    <div class="gap"></div>
+    <h1 class="display t-display" data-split data-arc="0.06">Your title</h1>
+    <aside class="notes"><p>Speaker notes go here.</p></aside>
+  </section>
+
+  <section class="slide" data-title="One idea" data-scene="night" data-sun="1640,1010,.9" data-transition="zoom" data-minutes="2">
+    <h2 class="display t-display t-wide" data-split>One idea per slide.</h2>
+    <div class="gap"></div>
+    <p class="lead" data-step="1">Click to reveal the next line.</p>
+    <div class="gap"></div>
+    <p class="pill" data-step="2" data-anim="pop">And land the point here.</p>
+  </section>
+
+  <section class="slide" data-title="Activity" data-scene="burst" data-transition="stripes" data-minutes="3">
+    <h2 class="display t-display" data-anim="slam">Your turn</h2>
+    <div class="gap"></div>
+    <button class="countdown" data-seconds="60" data-anim="pop"></button>
+    <div class="gap"></div>
+    <p class="pill" data-anim="pop">Sixty seconds. Press T.</p>
+  </section>
+
+  <section class="slide" data-title="Try it" data-scene="night" data-sun="960,1580,1.7" data-transition="sun" data-minutes="3">
+    <h2 class="display" style="font-size:150px" data-split>Try this prompt</h2>
+    <div class="gap"></div>
+    <div class="prompt t-wide" data-anim="rise">
+      <div class="prompt-bar"><span class="prompt-label">Everyone, together</span><button class="prompt-copy" type="button">Copy</button></div>
+      <p class="prompt-text" style="font-size:40px" data-type>Explain [your topic] to a first-year student in three short sentences.</p>
+    </div>
+    <div class="gap"></div>
+    <a class="launch" data-anim="rise" href="https://chatgpt.com" target="_blank" rel="noopener">Open ChatGPT</a>
+  </section>
+
+</main>
+
+<script src="../../assets/js/world.js"></script>
+<script src="../../assets/js/fx.js"></script>
+<script src="../../assets/js/engine.js"></script>
+</body>
+</html>

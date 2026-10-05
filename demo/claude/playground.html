@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playground</title>
+<style>
+  :root { --night: #040D1C; --navy: #07112E; --amber: #F8AA0B; --cream: #FAEDD1; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: grid; place-items: center; overflow: hidden;
+    background: radial-gradient(circle at 50% 120%, rgba(248, 170, 11, .35), transparent 55%), var(--night);
+    color: var(--cream); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  main { display: grid; justify-items: center; gap: 28px; text-align: center; padding: 24px; }
+  h1 { margin: 0; font-size: clamp(40px, 9vw, 120px); font-style: italic; font-weight: 900; text-transform: uppercase; letter-spacing: .01em; text-shadow: .04em .06em 0 var(--amber); }
+  p { margin: 0; font-size: clamp(16px, 2.2vw, 26px); opacity: .8; }
+</style>
+</head>
+<body>
+  <main id="stage">
+    <h1>Playground</h1>
+    <p>The room decides what gets built here.</p>
+    <!-- The agent adds the button here. -->
+  </main>
+</body>
+</html>

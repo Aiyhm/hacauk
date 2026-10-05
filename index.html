@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HacAUK — Presentations</title>
+<meta name="description" content="HacAUK presentations: open a deck and present it full screen.">
+<meta name="theme-color" content="#040D1C">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Titan+One&family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;1,400;1,500&family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/css/system.css">
+<link rel="stylesheet" href="assets/css/home.css">
+</head>
+<body class="home">
+
+<div class="home-bg" aria-hidden="true"><div class="home-stage"><div class="world" data-scene="night"></div></div></div>
+<div class="vignette"></div>
+<div class="grain"></div>
+
+<main class="home-main">
+  <header class="home-hero">
+    <h1 class="brandmark home-mark" aria-label="HacAUK">H<small>ac</small>AUK</h1>
+    <div class="wings home-wings">
+      <span class="wing wing--l"><i></i><i></i><i></i></span>
+      <span class="medal">
+        <svg viewBox="0 0 200 200" role="img" aria-label="AI Semester">
+          <circle cx="100" cy="100" r="94" fill="#07112E" stroke="#F8AA0B" stroke-width="8"/>
+          <circle cx="100" cy="100" r="78" fill="none" stroke="#F8AA0B" stroke-width="2.5"/>
+          <path id="medal-arc" d="M36 104a64 64 0 01128 0" fill="none"/>
+          <text font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="25" letter-spacing="4" fill="#FAEDD1"><textPath href="#medal-arc" startOffset="50%" text-anchor="middle">AI SEMESTER</textPath></text>
+          <path fill="#F8AA0B" d="M100 78c2.6 22 11 30.4 36 36-25 5.6-33.4 14-36 36-2.6-22-11-30.4-36-36 25-5.6 33.4-14 36-36Z"/>
+          <circle cx="66" cy="120" r="2.5" fill="#FAEDD1"/><circle cx="134" cy="120" r="2.5" fill="#FAEDD1"/><circle cx="74" cy="146" r="2" fill="#FAEDD1"/><circle cx="126" cy="146" r="2" fill="#FAEDD1"/>
+        </svg>
+      </span>
+      <span class="wing wing--r"><i></i><i></i><i></i></span>
+    </div>
+  </header>
+
+  <section class="shelf" aria-labelledby="shelf-title">
+    <p class="eyebrow shelf-title" id="shelf-title"><span>Now showing</span></p>
+    <div class="shelf-list" id="decks"></div>
+    <noscript><p class="shelf-empty">Turn on JavaScript to list the decks, or open <a href="decks/art-of-ai-prompting/index.html">The Art of AI Prompting</a> directly.</p></noscript>
+  </section>
+
+  <footer class="home-foot">
+    <span><kbd>→</kbd> next</span>
+    <span><kbd>F</kbd> fullscreen</span>
+    <span><kbd>O</kbd> all slides</span>
+    <span><kbd>S</kbd> speaker view</span>
+    <span><kbd>?</kbd> every shortcut</span>
+  </footer>
+</main>
+
+<script src="assets/js/world.js"></script>
+<script src="assets/js/decks.js"></script>
+<script src="assets/js/home.js"></script>
+</body>
+</html>
