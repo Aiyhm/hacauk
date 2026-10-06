@@ -79,9 +79,8 @@
 
 .w-anchor {
   position: absolute; left: 0; top: 0; width: 0; height: 0;
-  transform: translate3d(var(--sun-x), var(--sun-y), 0);
+  transform: translate(var(--sun-x), var(--sun-y));
   transition: transform var(--world-dur) var(--ease-io);
-  will-change: transform;
 }
 .w-glow {
   position: absolute; left: -1300px; top: -1300px; width: 2600px; height: 2600px; border-radius: 50%;
@@ -136,7 +135,7 @@
 .w-terrain {
   position: absolute; left: -480px; top: 0; width: 2880px; height: 1500px;
   opacity: var(--terrain);
-  transform: translate3d(0, calc((1 - var(--terrain)) * 320px), 0);
+  transform: translateY(calc((1 - var(--terrain)) * 320px));
   transition: opacity .7s, transform 1.2s var(--ease-io);
 }
 .w-terrain svg { display: block; width: 100%; height: 100%; }
@@ -157,14 +156,23 @@
   background-size: 240px 240px, 240px 240px;
   background-position: 50% 0, 0 0;
   transform: rotateX(72deg);
-  animation: w-floor 3.2s linear infinite;
 }
+.world[data-scene="burst"] .w-floor-plane { animation: w-floor 3.2s linear infinite; }
+/* the grid floor and stepped horizon only exist on sunburst slides */
+.world:not([data-scene="burst"]) .w-floor, .world:not([data-scene="burst"]) .w-mesa { visibility: hidden; }
 .w-floor::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--amber); z-index: 2; }
 .w-floor::after {
   content: ''; position: absolute; inset: 0; z-index: 1;
   background: linear-gradient(180deg, var(--navy) 0, rgba(7, 17, 46, .72) 5%, rgba(7, 17, 46, 0) 26%);
 }
 .w-dim { position: absolute; inset: -1600px; background: var(--night); opacity: var(--dim); transition: opacity .9s; }
+
+/* lite backdrop for phones and tablets (see world.js) */
+.lite .world * { transition: none !important; }
+.lite .w-rays i, .lite .w-star, .lite .w-floor-plane, .lite .w-anchor { animation: none !important; }
+.lite .w-floor-plane { display: none; }
+.lite .w-floor { perspective: none; }
+.lite .grain, .lite .vignette { display: none; }
 
 @keyframes w-spin { to { transform: rotate(360deg); } }
 @keyframes w-twinkle {
@@ -190,6 +198,8 @@
   box-shadow: 0 0 0 80px var(--cream), inset 0 0 0 2px rgba(7, 17, 46, .55), inset 0 0 70px rgba(3, 8, 20, .5);
 }
 body[data-scene="burst"] .frame { opacity: 1; }
+.frame { visibility: hidden; transition: opacity .45s, visibility 0s .45s; }
+body[data-scene="burst"] .frame { visibility: visible; transition: opacity .45s; }
 body[data-scene="burst"] .vignette { opacity: .45; }
 
 /* ==========================================================================

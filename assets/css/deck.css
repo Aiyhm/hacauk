@@ -180,7 +180,8 @@ body.is-help .help { opacity: 1; visibility: visible; }
 
 /* ---- prompt sheet (handout) ---- */
 body.is-sheet { overflow: auto; background: var(--night); }
-body.is-sheet .viewport, body.is-sheet .hud, body.is-sheet .progress, body.is-sheet .frame { display: none; }
+body.is-sheet .viewport, body.is-sheet .hud, body.is-sheet .progress, body.is-sheet .frame,
+body.is-sheet .overview, body.is-sheet .help, body.is-sheet .blackout, body.is-sheet .vignette { display: none; }
 .sheet { display: none; }
 body.is-sheet .sheet { display: block; position: relative; z-index: 9; max-width: 760px; margin: 0 auto; padding: clamp(28px, 6vw, 64px) 20px 80px; color: var(--cream); font-family: var(--font-body); }
 .sheet-brand { font-size: 34px; }
@@ -235,3 +236,20 @@ body.motion-calm .slide.is-active [data-split] .ch { animation: a-fade .35s line
 .tile--card svg { stroke: var(--amber); }
 .tile--card svg .fill { fill: var(--amber); }
 .tile--card svg.logo { fill: var(--amber); stroke: none; }
+
+/* overlays that are not showing take no graphics memory */
+.hud { visibility: hidden; transition: opacity .3s, transform .4s var(--ease-out), visibility 0s .4s; }
+body.hud-on .hud { visibility: visible; transition: opacity .3s, transform .4s var(--ease-out); }
+.toast { visibility: hidden; transition: opacity .25s, transform .35s var(--ease-out), visibility 0s .35s; }
+.toast.is-on { visibility: visible; transition: opacity .25s, transform .35s var(--ease-out); }
+.blackout { visibility: hidden; transition: opacity .35s, visibility 0s .35s; }
+body.is-black .blackout { visibility: visible; transition: opacity .35s; }
+
+/* phones and tablets (class "lite", see world.js).
+   The stage is scaled down with a transform. If anything inside it is animated or 3D, mobile Safari
+   turns the whole stage, backdrop included, into one graphics layer drawn at full 1920x1080 size
+   times the screen density: hundreds of MB, enough for it to kill the page. So on these devices
+   slides show their final state with no animation, transition or 3D tilt. */
+.lite .slide, .lite .slide *, .lite .slide *::before, .lite .slide *::after { animation: none !important; transition: none !important; }
+.lite .slide [data-anim], .lite .slide .ch, .lite .slide .scan.is-shown { opacity: 1 !important; }
+.lite .t-tile, .lite .tool-art .tile, .lite .duo-tool .tile, .lite .laptop { transform: none !important; }

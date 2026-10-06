@@ -3,6 +3,14 @@
 (function (root) {
   'use strict';
 
+  // Phones and tablets get a lighter backdrop (class "lite" on <html>): no always-running
+  // animations and no 3D layers. Mobile Safari keeps every animated or 3D element as its own
+  // full-resolution graphics layer, and this backdrop is big enough to exhaust its memory.
+  var mm = root.matchMedia ? function (q) { return root.matchMedia(q).matches; } : function () { return false; };
+  var smallScreen = root.screen && Math.min(root.screen.width, root.screen.height) <= 500;   // phones only: a projector at 800x600 must stay full
+  var lite = mm('(hover: none) and (pointer: coarse)') || !!smallScreen;
+  if (lite) document.documentElement.classList.add('lite');
+
   // x, y in stage px (1920x1080), size px, twinkle delay s, tone
   var STARS = [
     [318, 232, 46, 0.0, 'amber'], [522, 322, 58, 1.4, 'amber'], [1562, 268, 70, 0.6, 'amber'],
@@ -109,5 +117,5 @@
     };
   }
 
-  root.HacAUKWorld = { markup: markup, apply: apply, parseSun: parseSun };
+  root.HacAUKWorld = { markup: markup, apply: apply, parseSun: parseSun, lite: lite };
 })(window);

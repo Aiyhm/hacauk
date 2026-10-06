@@ -28,7 +28,8 @@
   var sysReduced = root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var motionPref = null;
   try { motionPref = sessionStorage.getItem('hacauk:motion'); } catch (e) {}
-  var calm = motionPref ? motionPref === 'calm' : sysReduced;
+  var lite = !!World.lite;                       // phones and tablets default to calm motion
+  var calm = motionPref ? motionPref === 'calm' : (sysReduced || lite);
 
   /* ------------------------------------------------------------------ DOM */
   body.classList.add('is-deck');
@@ -284,7 +285,7 @@
     var from = slides[index], to = slides[i];
     if (from === to) { setStep(st || 0); return; }
     busy = true; pendingStep = st || 0; arrivingBack = dir < 0;
-    var kind = opts.instant ? 'cut' : (calm ? 'fade' : (dir >= 0 ? to.transition : from.transition));
+    var kind = (opts.instant || lite) ? 'cut' : (calm ? 'fade' : (dir >= 0 ? to.transition : from.transition));
     if (!T[kind]) kind = 'fade';
     try { await T[kind](from, to, dir); }
     catch (err) {                                   // never strand the presenter on a broken transition

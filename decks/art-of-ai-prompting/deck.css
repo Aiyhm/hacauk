@@ -98,12 +98,14 @@
 @keyframes bar-grow { from { scale: 0 1; } }
 /* sentence three never settles */
 .reel { display: block; height: 1.16em; overflow: hidden; }
-.reel span { display: block; animation: reel 1.1s steps(8) infinite; }
+.reel span { display: block; }
+.slide.is-active .reel span { animation: reel 1.1s steps(8) infinite; }
 .reel b { display: grid; place-items: center; height: 1.2889em; }
 @keyframes reel { to { transform: translateY(-100%); } }
-.g3 .cand i::after { animation: bar-jitter .7s steps(3) infinite alternate !important; }
-.g3 .cand:nth-child(2) i::after { animation-delay: -.25s !important; }
-.g3 .cand:nth-child(3) i::after { animation-delay: -.5s !important; }
+/* only while the slide is on screen, and without !important so the phone rules can switch it off */
+.s-guess.is-active .g3 .cand i::after { animation: bar-jitter .7s steps(3) infinite alternate; }
+.s-guess.is-active .g3 .cand:nth-child(2) i::after { animation-delay: -.25s; }
+.s-guess.is-active .g3 .cand:nth-child(3) i::after { animation-delay: -.5s; }
 @keyframes bar-jitter { 0% { scale: .22 1; } 50% { scale: .44 1; } 100% { scale: .3 1; } }
 
 /* ============================== 3 · why the prompt matters ============================== */
@@ -371,3 +373,10 @@
 .grain { transition: opacity .4s; }
 body:has(.s-close.is-active) .grain { opacity: .14; }
 body:has(.slide.is-active .scan.is-shown) .grain, body:has(.slide.is-active .scan.is-shown) .vignette { opacity: 0; }
+
+/* phones and tablets show the end state of the drawn-in pieces (no animation there, see assets/css/deck.css) */
+.lite .s-why:not(.step-1) .hv-a { visibility: hidden; }
+.lite .s-why .hv-a > * { stroke-dashoffset: 0; }
+.lite .s-why.step-3 .hv-a { opacity: 0; }
+.lite .s-why.step-3 .hv-b { opacity: 1; }
+.lite .art-mark svg.is-shown path { stroke-dashoffset: 0; fill-opacity: 1; }

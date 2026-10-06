@@ -82,7 +82,7 @@ body.home .grain { z-index: 5; }
 
 @media (max-width: 760px) {
   .ticket-in { grid-template-columns: 1fr; }
-  .ticket-cover { min-height: 0; aspect-ratio: 16 / 9; }
+  .ticket-cover { min-height: 0; height: 0; padding-top: 56.25%; }   /* 16:9; Safari collapses aspect-ratio here */
   .ticket-stub { flex-direction: row; gap: 12px; border-left: 0; border-top: 2px dashed rgba(248, 170, 11, .6); padding: 12px 18px; }
   .home-foot { display: none; }
 }
