@@ -1,6 +1,6 @@
 /* HacAUK fx — small self-contained slide behaviours:
    data-split (per-letter titles), data-type (typewriter), data-count (count-up),
-   .countdown (activity timer), .prompt-copy (copy a prompt). */
+   .prompt-copy (copy a prompt). */
 (function (root) {
   'use strict';
 
@@ -116,80 +116,6 @@
     el.__raf = requestAnimationFrame(tick);
   }
 
-  /* ---------- countdown ---------- */
-  var audio = null;
-  function chime() {
-    try {
-      var AC = root.AudioContext || root.webkitAudioContext; if (!AC) return;
-      audio = audio || new AC();
-      if (audio.state === 'suspended') audio.resume();
-      var t0 = audio.currentTime;
-      [[784, 0], [1046.5, 0.17], [1318.5, 0.34]].forEach(function (n) {
-        var o = audio.createOscillator(), g = audio.createGain();
-        o.type = 'sine'; o.frequency.value = n[0];
-        g.gain.setValueAtTime(0.0001, t0 + n[1]);
-        g.gain.exponentialRampToValueAtTime(0.16, t0 + n[1] + 0.02);
-        g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + 0.7);
-        o.connect(g); g.connect(audio.destination);
-        o.start(t0 + n[1]); o.stop(t0 + n[1] + 0.75);
-      });
-    } catch (e) { /* sound is a nicety */ }
-  }
-  function fmt(s) { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
-
-  function countdown(el) {
-    if (el.__cd) return el.__cd;
-    var total = parseFloat(el.getAttribute('data-seconds')) || 60;
-    var R = 143, C = 2 * Math.PI * R;
-    el.setAttribute('type', 'button');
-    el.setAttribute('data-interactive', '');
-    el.innerHTML =
-      '<svg viewBox="0 0 300 300" aria-hidden="true"><circle class="cd-bg" cx="150" cy="150" r="' + R + '"/>' +
-      '<circle class="cd-fg" cx="150" cy="150" r="' + R + '" stroke-dasharray="' + C.toFixed(2) + '" stroke-dashoffset="0"/></svg>' +
-      '<span class="cd-time">' + fmt(total) + '</span><span class="cd-hint">T to start</span>';
-    var fg = el.querySelector('.cd-fg'), time = el.querySelector('.cd-time');
-    var left = total, running = false, endAt = 0, timer = 0, silent = el.getAttribute('data-sound') === 'off';
-
-    function paint() {
-      time.textContent = fmt(left);
-      fg.setAttribute('stroke-dashoffset', (C * (1 - left / total)).toFixed(2));
-      el.classList.toggle('is-low', running && left <= Math.min(10, total / 3) && left > 0);
-      el.setAttribute('aria-label', 'Timer, ' + fmt(left) + ' left. Press to ' + (running ? 'pause' : 'start') + '.');
-    }
-    function tick() {
-      left = Math.max(0, (endAt - Date.now()) / 1000);
-      paint();
-      if (left <= 0) { stop(); el.classList.add('is-done'); if (!silent) chime(); }
-    }
-    function stop() { running = false; clearInterval(timer); el.classList.remove('is-running', 'is-low'); }
-    var api = {
-      start: function () {
-        if (running) return;
-        if (left <= 0) api.reset();
-        running = true; endAt = Date.now() + left * 1000;
-        el.classList.add('is-running'); el.classList.remove('is-done');
-        if (!silent) { try { var AC = root.AudioContext || root.webkitAudioContext; audio = audio || (AC ? new AC() : null); if (audio && audio.state === 'suspended') audio.resume(); } catch (e) {} }
-        timer = setInterval(tick, 100); tick();
-      },
-      pause: function () { if (!running) return; left = Math.max(0, (endAt - Date.now()) / 1000); stop(); paint(); },
-      toggle: function () { running ? api.pause() : api.start(); },
-      reset: function () { stop(); left = total; el.classList.remove('is-done'); paint(); },
-      isRunning: function () { return running; }
-    };
-    el.addEventListener('click', function (e) { e.stopPropagation(); api.toggle(); });
-    el.__cd = api; paint();
-    return api;
-  }
-
-  /* the countdown that is currently visible on a slide (latest shown wins) */
-  function activeCountdown(slideEl) {
-    var all = $$('.countdown', slideEl).filter(function (c) {
-      var holder = c.closest('[data-step]');
-      return (!holder || holder.classList.contains('is-shown')) && c.offsetParent !== null;
-    });
-    return all.length ? countdown(all[all.length - 1]) : null;
-  }
-
   /* ---------- copy ---------- */
   function copy(text) {
     function fallback() {
@@ -238,7 +164,6 @@
   function init(scope) {
     $$('[data-split]', scope).forEach(split);
     $$('[data-type]', scope).forEach(prepType);
-    $$('.countdown', scope).forEach(countdown);
   }
 
   document.addEventListener('deck:enter', function (e) {
@@ -250,22 +175,24 @@
     var d = e.detail || {};
     if (d.step > d.prev) run(e.target, d.prev + 1, d.step, true);
   });
-  document.addEventListener('deck:leave', function (e) {
-    $$('.countdown', e.target).forEach(function (c) { if (c.__cd) { c.__cd.pause(); if (c.classList.contains('is-done')) c.__cd.reset(); } });
-  });
   document.addEventListener('click', function (e) {
     var btn = e.target.closest && e.target.closest('.prompt-copy');
     if (!btn) return;
     e.stopPropagation();
     var card = btn.closest('.prompt'); if (!card) return;
+    var old = btn.getAttribute('data-label') || btn.textContent;
+    btn.setAttribute('data-label', old);
     copy(promptText(card)).then(function () {
-      var old = btn.textContent; btn.textContent = 'Copied'; btn.classList.add('is-done');
-      setTimeout(function () { btn.textContent = old; btn.classList.remove('is-done'); }, 1400);
-    }, function () { btn.textContent = 'Select + copy'; });
+      btn.textContent = 'Copied'; btn.classList.add('is-done');
+      document.dispatchEvent(new CustomEvent('deck:copied', { detail: { ok: true } }));
+      clearTimeout(btn.__t); btn.__t = setTimeout(function () { btn.textContent = old; btn.classList.remove('is-done'); }, 1600);
+    }, function () {
+      document.dispatchEvent(new CustomEvent('deck:copied', { detail: { ok: false } }));
+    });
   });
 
   root.HacAUKFx = {
-    init: init, split: split, type: type, showFull: showFull, fill: fill, count: count, countdown: countdown,
-    activeCountdown: activeCountdown, visiblePrompts: visiblePrompts, promptText: promptText, copy: copy, chime: chime
+    init: init, split: split, type: type, showFull: showFull, fill: fill, count: count,
+    visiblePrompts: visiblePrompts, promptText: promptText, copy: copy
   };
 })(window);

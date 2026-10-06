@@ -1,9 +1,10 @@
 /* The Art of AI Prompting — layouts for this deck only.
    Everything is placed on the 1920x1080 stage; nothing meant to be read is under 30px. */
 
-.s-title, .s-game, .s-round2, .s-art, .s-tool, .s-duo, .s-agents, .s-pick, .s-close { display: block; padding: 0; }
+.s-title, .s-why, .s-art, .s-tool, .s-duo, .s-double, .s-agents, .s-pick, .s-task, .s-close { display: block; padding: 0; }
 .punch { position: absolute; left: 0; right: 0; top: 944px; display: flex; justify-content: center; }
 .punch--l { left: 150px; right: auto; }
+.punch.swap { display: grid; justify-items: center; }
 
 /* ============================== 1 · title ============================== */
 .t-top { position: absolute; left: 0; right: 0; top: 40px; display: flex; align-items: center; justify-content: center; gap: 28px; }
@@ -55,6 +56,23 @@
 .t-presenter .label::before, .t-presenter .label::after { content: ''; width: 70px; height: 1.5px; background: var(--amber); }
 .t-presenter b { font-family: var(--font-body); font-weight: 700; font-size: 44px; letter-spacing: -.01em; line-height: 1; }
 
+/* QR badge to the prompt sheet (dark modules on cream so every phone camera reads it) */
+.qr { position: absolute; }
+.qr-in { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 14px 14px 12px; border: 2px solid var(--amber); border-radius: 16px; background: rgba(4, 11, 24, .94); }
+.qr-in img { display: block; width: 140px; height: 140px; padding: 8px; background: var(--cream); border-radius: 6px; }
+.qr-in span { font-family: var(--font-body); font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--cream); white-space: nowrap; }
+.t-qr { right: 132px; bottom: 44px; }
+
+/* one click: the QR fills the screen. A plain fade over a solid backdrop, nothing moving underneath. */
+.t-scan { position: absolute; inset: -700px; z-index: 3; display: grid; place-items: center; background: var(--night); --a: a-fade; --dur: .4s; --ease: ease; }
+.t-scan-in { display: flex; align-items: center; gap: 76px; padding: 60px 80px; text-align: left; border: 3px solid var(--amber); border-radius: 30px; background: #050B18; }
+.t-scan-in img { display: block; width: 540px; height: 540px; padding: 28px; background: var(--cream); border-radius: 10px; }
+.t-scan-in .label { margin: 0 0 26px; font-size: 26px; }
+.t-scan-url { margin: 0 0 40px; font-family: var(--font-mono); font-weight: 700; font-size: 78px; line-height: 1.12; letter-spacing: -.01em; color: var(--amber-hi); }
+.t-scan-in .lead { font-size: 52px; line-height: 1.2; }
+/* once the QR has faded in over the slide, park everything behind it so nothing moves underneath */
+.s-title.step-1 > :not(.t-scan) { visibility: hidden; transition: visibility 0s .45s; }
+
 /* ============================== 2 · the guesser ============================== */
 .s-guess { align-items: flex-start; text-align: left; padding: 104px 150px 96px; justify-content: flex-start; }
 .s-guess .display { font-size: 150px; margin-top: 26px; max-width: 1320px; }
@@ -87,48 +105,40 @@
 .g3 .cand:nth-child(3) i::after { animation-delay: -.5s !important; }
 @keyframes bar-jitter { 0% { scale: .22 1; } 50% { scale: .44 1; } 100% { scale: .3 1; } }
 
-/* ============================== 3 + 4 · draw a house ============================== */
-.game-title { position: absolute; left: 0; right: 0; top: 150px; text-align: center; transform-origin: 50% 0; transition: scale .9s var(--ease-io), translate .9s var(--ease-io); }
-.game-title .display { display: block; font-size: 236px; line-height: .86; }
-.game-title .display--amber { font-size: 320px; }
-.game-ring { position: absolute; left: 0; right: 0; top: 668px; display: flex; justify-content: center; transition: opacity .4s; }
-.game-ring .wings { gap: 36px; }
-.game-ring .wing { width: 440px; gap: 13px; }
-.game-ring .wing i { height: 16px; }
-.game-ring .countdown { width: 250px; height: 250px; }
-.game-ring .countdown .cd-time { font-size: 92px; }
-.game-ring .countdown .cd-hint { bottom: 42px; font-size: 13px; }
-.game-pill { position: absolute; left: 0; right: 0; top: 948px; display: grid; justify-items: center; }
-.game-pill > * { grid-area: 1 / 1; }
-.s-game.step-1 .gp-0, .s-game.step-2 .gp-1 { opacity: 0 !important; visibility: hidden; animation: none !important; }
-
-.paper {
-  position: relative; width: 520px; height: 580px; padding: 28px 30px 0; border-radius: 10px; background: var(--cream);
-  box-shadow: 0 0 0 5px var(--navy), 18px 22px 0 rgba(3, 8, 20, .5); rotate: -2.5deg;
-}
-.paper .label { display: block; color: var(--navy); font-size: 22px; letter-spacing: .26em; text-align: center; }
-.paper svg { display: block; width: 100%; height: 490px; margin-top: 8px; overflow: visible; }
-.house path, .house circle { fill: none; stroke: var(--navy); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
-.house .hw { stroke: var(--amber-lo); stroke-width: 6; }
-.house .hf { fill: var(--amber); }
-.is-shown .house > * { animation: draw .75s var(--ease-io) calc(.35s + var(--k, 0) * .16s) forwards; }
-.slide.is-static .house > * { stroke-dashoffset: 0; animation: none !important; }
-@keyframes draw { to { stroke-dashoffset: 0; } }
-
-.r2-head { position: absolute; left: 150px; top: 96px; }
-.r2-head .display { font-size: 156px; }
-.prompt.r2-brief { position: absolute; left: 150px; top: 306px; width: 1050px; }
-.brief-line { margin: 0; padding: 20px 36px; font-family: var(--font-mono); font-size: 37px; line-height: 1.32; color: var(--cream); border-bottom: 1.5px solid rgba(248, 170, 11, .22); }
-.brief-line:last-child { border-bottom: 0; padding-bottom: 28px; }
+/* ============================== 3 · why the prompt matters ============================== */
+.why-head { position: absolute; left: 0; right: 0; top: 58px; text-align: center; }
+.why-head .display { font-size: 138px; }
+.prompt.why-brief { position: absolute; left: 150px; top: 286px; width: 710px; }
+.brief-line { margin: 0; padding: 18px 32px; font-family: var(--font-mono); font-size: 33px; line-height: 1.32; color: var(--cream); border-bottom: 1.5px solid rgba(248, 170, 11, .22); }
+.brief-line:last-child { border-bottom: 0; padding-bottom: 26px; }
 .brief-line::before { content: '> '; color: var(--amber); font-weight: 700; }
-.r2-side { position: absolute; right: 150px; top: 290px; width: 520px; height: 620px; display: grid; place-items: center; }
-.r2-side > * { grid-area: 1 / 1; }
-.r2-side .countdown { width: 380px; height: 380px; }
-.r2-side .countdown .cd-time { font-size: 136px; }
-.r2-side .countdown .cd-hint { bottom: 74px; }
-.s-round2.step-4 .r2-timer { opacity: 0 !important; visibility: hidden; }
+.why-one { font-size: 52px; padding: 34px 34px 40px; }
+.s-why.step-2 .why-one, .s-why:not(.step-2) .why-four { display: none; }
+.why-four.is-shown .brief-line { animation: a-wipe .7s var(--ease-io) calc(var(--k) * 260ms) both; }
+.slide.is-static .why-four .brief-line { animation: none; }
 
-/* ============================== 5 · ART, in a frame ============================== */
+.why-grid { position: absolute; left: 922px; top: 286px; width: 848px; display: grid; grid-template-columns: repeat(3, 258px); gap: 37px; }
+.mini { width: 258px; height: 258px; rotate: var(--r, 0deg); }
+.mini-in { position: relative; width: 100%; height: 100%; border-radius: 8px; background: var(--cream); box-shadow: 0 0 0 4px var(--navy), 10px 12px 0 rgba(3, 8, 20, .5); }
+.mini svg { position: absolute; inset: 12px; width: calc(100% - 24px); height: calc(100% - 24px); overflow: visible; }
+.house { fill: none; stroke: var(--navy); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+.hv-a > * { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.hv-b { opacity: 0; }
+.s-why.step-1 .hv-a > * { animation: draw .8s var(--ease-io) calc(var(--k) * 130ms + var(--j, 0) * 90ms) forwards; }
+.s-why.step-3 .mini-in { animation: flipx .7s var(--ease-io) calc(var(--k) * 90ms) both; }
+.s-why.step-3 .hv-a { animation: half-out .7s linear calc(var(--k) * 90ms) both; }
+.s-why.step-3 .hv-b { animation: half-in .7s linear calc(var(--k) * 90ms) both; }
+.slide.is-static .hv-a { opacity: 0; animation: none; }
+.slide.is-static .hv-b { opacity: 1; animation: none; }
+.slide.is-static .mini-in { animation: none; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes flipx { 0%, 100% { scale: 1 1; } 50% { scale: 0 1; } }
+@keyframes half-out { 0%, 49.9% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes half-in { 0%, 49.9% { opacity: 0; } 50%, 100% { opacity: 1; } }
+.s-why.step-3 .wp-1 { opacity: 0 !important; visibility: hidden; animation: none !important; }
+.punch.swap > * { grid-area: 1 / 1; }
+
+/* ============================== 4 · ART, in a frame ============================== */
 .art-eyebrow { position: absolute; left: 150px; top: 116px; }
 .art-rows { position: absolute; left: 150px; top: 236px; width: 1000px; display: flex; flex-direction: column; gap: 34px; }
 .art-row { display: grid; grid-template-columns: 262px 1fr; align-items: center; gap: 26px; text-align: left; min-height: 116px; }
@@ -152,14 +162,14 @@
 .art-cap { position: absolute; left: 1210px; top: 762px; width: 580px; margin: 0; text-align: center; }
 .art-cap .label { font-size: 30px; letter-spacing: .4em; }
 
-/* ============================== 6 + 7 · one tool ==============================
+/* ============================== one tool (Claude, ChatGPT) ==============================
    step 0 is the poster: big tile on the sun. From step 1 the tile and name fly to the
    top-left corner, the sun sinks, and the whole stage becomes the working area. */
 .tool-art { position: absolute; left: 270px; top: 300px; width: 400px; transform-origin: 0 0; transition: translate 1s var(--ease-io), scale 1s var(--ease-io); }
 .tool-art .tile { transform: perspective(1100px) rotateY(16deg) rotateZ(-5deg); }
 .s-tool.step-1 .tool-art { translate: -120px -214px; scale: .43; }
 .tool-head { position: absolute; left: 800px; top: 190px; text-align: left; transition: translate 1s var(--ease-io); }
-.tool-head .eyebrow { font-size: 40px; letter-spacing: .4em; transition: opacity .4s; }
+.tool-head .eyebrow { font-size: 40px; letter-spacing: .4em; }
 .tool-name { font-size: 200px; margin-top: 16px; transform-origin: 0 0; transition: scale 1s var(--ease-io); }
 .s-tool.step-1 .tool-head { translate: -440px -112px; }
 .s-tool.step-1 .tool-name { scale: .58; }
@@ -167,18 +177,16 @@
 .tool-intro .lead { margin-bottom: 36px; font-size: 64px; }
 .tool-intro .chips { margin-bottom: 50px; }
 .tool-intro .chip { font-size: 38px; }
+.tool-intro .launch { font-size: 28px; padding: 20px 34px; }
 .s-tool.step-1 .tool-intro { opacity: 0 !important; visibility: hidden; animation: none !important; }
-.tool-timer { position: absolute; right: 150px; top: 54px; }
-.tool-timer .countdown { width: 236px; height: 236px; }
-.tool-timer .countdown .cd-time { font-size: 84px; }
-.tool-timer .countdown .cd-hint { bottom: 40px; font-size: 13px; }
+.tool-open { position: absolute; right: 150px; top: 124px; }
+.tool-open .launch { font-size: 26px; padding: 19px 30px; }
 .tool-work { position: absolute; left: 150px; right: 150px; top: 322px; display: grid; text-align: left; }
 .tool-work > * { grid-area: 1 / 1; pointer-events: none; }
 .tool-work a, .tool-work button { pointer-events: auto; }
 .s-tool.step-3 .p-watch { opacity: 0 !important; visibility: hidden; }
 .s-tool.step-3 .p-watch * { animation: none !important; visibility: hidden; }
 .p-turn .cue { font-size: 34px; margin-bottom: 14px; }
-.duo-b > div > .cue:first-child { margin-bottom: 0; }
 .p-turn .prompt { margin-top: 10px; }
 .p-turn .prompt-text { font-size: 43px; }
 .p-turn .prompt + .cue { margin-top: 30px; }
@@ -192,18 +200,18 @@
 
 /* one line vs four lines */
 .versus { display: grid; grid-template-columns: 1fr 1.72fr; gap: 36px; align-items: start; }
-.mini { --c: 22px; }
-.mini .prompt-bar { font-size: 22px; padding: 16px 30px; }
+.mini-card { --c: 22px; }
+.mini-card .prompt-bar { font-size: 22px; padding: 16px 30px; }
 .mini-body { padding: 28px 34px 34px; }
 .mini-q { margin: 0 0 28px; font-family: var(--font-mono); font-size: 42px; line-height: 1.3; color: var(--cream); }
 .mini-q::before { content: '> '; color: var(--amber); font-weight: 700; }
 .wall { display: grid; gap: 16px; }
 .wall i { display: block; height: 18px; border-radius: 2px; background: rgba(250, 237, 209, .22); transform-origin: 0 50%; }
-.mini.is-shown .wall i { animation: a-grow .45s var(--ease-out) calc(.5s + var(--k) * 60ms) both; }
+.mini-card.is-shown .wall i { animation: a-grow .45s var(--ease-out) calc(.5s + var(--k) * 60ms) both; }
 .four { display: grid; gap: 16px; margin: 0 0 34px; }
 .four p { display: grid; grid-template-columns: 56px 1fr; gap: 20px; align-items: center; margin: 0; font-family: var(--font-mono); font-size: 36px; line-height: 1.25; color: var(--cream); white-space: nowrap; }
 .four p > span { display: grid; place-items: center; width: 56px; height: 52px; font-weight: 700; font-size: 31px; color: var(--navy); background: var(--amber); border-radius: 5px; }
-.mini.is-shown .four p { animation: a-left .6s var(--ease-out) calc(.15s + var(--k) * 160ms) both; }
+.mini-card.is-shown .four p { animation: a-left .6s var(--ease-out) calc(.15s + var(--k) * 160ms) both; }
 .tidy { display: flex; align-items: center; gap: 20px; }
 .tidy .wall { flex: 1; }
 .tidy .wall i { background: var(--amber); }
@@ -220,11 +228,11 @@
 .plan i::before { content: ''; width: 24px; height: 24px; border: 4px solid var(--navy); border-radius: 4px; }
 .plan i::after { content: ''; flex: 0 0 var(--w, 70%); height: 13px; border-radius: 3px; background: rgba(7, 17, 46, .55); }
 
-/* ============================== 8–10 · two tools ============================== */
+/* ============================== two tools ============================== */
 .duo-head { position: absolute; left: 0; right: 0; top: 70px; text-align: center; transform-origin: 50% 0; transition: scale .9s var(--ease-io), translate .9s var(--ease-io); }
 .duo-head .display { font-size: 120px; }
-.duo-mid--plus { top: 422px !important; font-size: 330px !important; }
 .duo-mid { position: absolute; left: 0; right: 0; top: 478px; margin: 0; text-align: center; font-family: var(--font-display); font-style: italic; font-size: 220px; line-height: 1; color: var(--navy); transition: opacity .3s; }
+.duo-mid--plus { top: 422px; font-size: 330px; }
 .duo-a { position: absolute; left: 150px; right: 150px; top: 262px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 560px; }
 .duo-tool { display: flex; flex-direction: column; align-items: center; gap: 22px; transition: opacity .5s, scale .6s var(--ease-io); }
 .duo-tool .tile { width: 330px; border-radius: 42px; }
@@ -233,22 +241,51 @@
 .duo-tool:last-child .tile { transform: perspective(1000px) rotateY(-15deg) rotateZ(4deg); }
 .duo-tool .lead { margin-top: 14px; font-size: 54px; white-space: nowrap; }
 .duo-tool .cue { min-height: 46px; font-size: 30px; white-space: nowrap; }
-.s-duo.step-1:not(.step-2) .duo-tool:last-child, .s-duo.step-2 .duo-tool:first-child { opacity: .28; scale: .92; }
-.s-duo.step-3 .duo-a, .s-duo.step-3 .duo-mid { opacity: 0 !important; visibility: hidden; pointer-events: none; }
-.s-duo.step-3 .duo-a * { animation: none !important; }
-.s-duo.step-3 .duo-head { scale: .62; translate: 0 -22px; }
-.duo-b { position: absolute; left: 150px; right: 150px; top: 206px; display: grid; grid-template-columns: 1fr 280px; gap: 56px; align-items: center; text-align: left; }
-.duo-b .cue { font-size: 33px; }
-.duo-b .prompt { margin: 16px 0 0; }
-.duo-b .prompt + .cue { margin-top: 30px; }
-.duo-b .prompt-text { font-size: 39px; }
-.duo-b .prompt--sm .prompt-text { font-size: 35px; padding-top: 22px; padding-bottom: 26px; }
-.duo-b .countdown { justify-self: center; width: 280px; height: 280px; }
-.duo-b .countdown .cd-time { font-size: 98px; }
-.duo-b .chips { margin-top: 30px; }
-.duo-b .chip { font-size: 36px; }
+.duo-tool .launch { font-size: 26px; padding: 18px 30px; }
+.s-duo.step-1:not(.step-2) .duo-tool:last-child, .s-duo.step-2:not(.step-3) .duo-tool:first-child { opacity: .28; scale: .92; }
+/* slides with a "your turn" panel swap the two tiles for it on the third click */
+.s-duo--turn.step-3 .duo-a, .s-duo--turn.step-3 .duo-mid { opacity: 0 !important; visibility: hidden; pointer-events: none; }
+.s-duo--turn.step-3 .duo-a * { animation: none !important; }
+.s-duo--turn.step-3 .duo-head { scale: .62; translate: 0 -22px; }
+.duo-b { position: absolute; left: 150px; right: 150px; top: 214px; text-align: left; }
+.duo-b .cue { font-size: 35px; }
+.duo-b .prompt { margin: 18px 0 0; }
+.duo-b .prompt + .cue { margin-top: 34px; }
+.duo-b .prompt-text { font-size: 43px; }
+.duo-b .open-row { margin-top: 34px; }
+.duo-b .launch { font-size: 26px; padding: 19px 30px; }
+.duo-need { position: absolute; left: 0; right: 0; top: 916px; display: flex; align-items: center; justify-content: center; gap: 22px; }
+.duo-need .label { font-size: 27px; letter-spacing: .18em; color: var(--cream); }
+.duo-need .chip { font-size: 36px; }
 
-/* ============================== 11 · agents ============================== */
+/* ============================== double prompting ============================== */
+.dbl-head { position: absolute; left: 0; right: 0; top: 62px; text-align: center; transform-origin: 50% 0; transition: scale .9s var(--ease-io), translate .9s var(--ease-io); }
+.dbl-head .eyebrow { font-size: 40px; }
+.dbl-head .display { font-size: 150px; margin-top: 18px; }
+.s-double.step-2 .dbl-head { scale: .6; translate: 0 -40px; }
+.dbl-flow { position: absolute; left: 0; right: 0; top: 372px; display: flex; align-items: flex-start; justify-content: center; gap: 22px; transition: opacity .35s; }
+.s-double.step-2 .dbl-flow { opacity: 0 !important; visibility: hidden; }
+.s-double.step-2 .dbl-flow * { animation: none !important; }
+.dbl-node { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.dbl-node > .box { height: 290px; display: grid; place-items: center; }
+.dbl-node .label { font-size: 27px; letter-spacing: .14em; color: var(--cream); white-space: nowrap; }
+.dbl-node .tile { width: 270px; }
+.dbl-node .tile b { font-size: 31px; }
+.dbl-idea { max-width: 320px; font-size: 42px; rotate: -3deg; }
+.dbl-doc { width: 310px; height: 280px; padding: 24px 26px; border-radius: 12px; background: var(--cream); box-shadow: 0 0 0 4px var(--navy), 10px 12px 0 rgba(3, 8, 20, .5); display: grid; gap: 11px; align-content: start; rotate: 2deg; }
+.dbl-doc b { display: block; font-family: var(--font-mono); font-size: 20px; letter-spacing: .14em; color: var(--navy); }
+.dbl-doc i { display: block; height: 13px; border-radius: 2px; background: rgba(7, 17, 46, .5); transform-origin: 0 50%; }
+.dbl-node.is-shown .dbl-doc i { animation: a-grow .4s var(--ease-out) calc(.35s + var(--k) * 55ms) both; }
+.dbl-arrow { flex: none; align-self: flex-start; width: 84px; height: 290px; display: grid; place-items: center; }
+.dbl-arrow::before { content: ''; width: 84px; height: 44px; background: var(--amber); clip-path: polygon(0 34%, 58% 34%, 58% 0, 100% 50%, 58% 100%, 58% 66%, 0 66%); }
+.dbl-turn { position: absolute; left: 150px; right: 150px; top: 250px; text-align: left; }
+.dbl-turn .cue { font-size: 35px; }
+.dbl-turn .prompt { margin: 18px 0 30px; }
+.dbl-turn .prompt-text { font-size: 43px; }
+.dbl-turn .open-row { margin-top: 34px; }
+.dbl-turn .launch { font-size: 26px; padding: 19px 30px; }
+
+/* ============================== agents ============================== */
 .ag-head { position: absolute; left: 0; right: 0; top: 70px; text-align: center; transform-origin: 50% 0; transition: scale .9s var(--ease-io), translate .9s var(--ease-io); }
 .ag-head .display { font-size: 150px; }
 .s-agents.step-1 .ag-head { scale: .6; translate: 0 -30px; }
@@ -257,8 +294,10 @@
 .ag-panes { position: absolute; left: 150px; right: 150px; top: 348px; display: grid; grid-template-columns: 1fr 1fr; gap: 44px; transition: translate .9s var(--ease-io); }
 .s-agents.step-1 .ag-panes { translate: 0 212px; }
 .pane { --c: 22px; text-align: left; }
-.pane .prompt-bar { font-size: 24px; padding: 17px 30px; }
-.pane .prompt-bar .launch { margin-left: auto; font-size: 17px; padding: 10px 16px; --c: 8px; }
+.pane .prompt-bar { font-size: 26px; padding: 15px 30px; gap: 16px; }
+.pane .prompt-bar::before { display: none; }
+.pane .prompt-bar svg { width: 34px; height: 34px; fill: var(--amber); flex: none; }
+.pane .prompt-bar .launch { margin-left: auto; font-size: 19px; padding: 11px 18px; --c: 8px; }
 .pane-body { min-height: 268px; padding: 24px 32px 30px; font-family: var(--font-mono); font-size: 33px; line-height: 1.6; color: var(--cream); }
 .pane-body p { margin: 0; white-space: nowrap; }
 .pane-body .ok { color: var(--amber-hi); }
@@ -267,7 +306,17 @@
 .pane-body .q { color: var(--amber); animation: caret 1s steps(1) infinite; }
 .s-agents.step-2 .pane-body .dim { display: none; }
 
-/* ============================== 12 · right tool, right job ============================== */
+/* ============================== exercise card (poster premiere) ============================== */
+.task-head { position: absolute; left: 0; right: 0; top: 54px; text-align: center; }
+.task-head .display { font-size: 156px; }
+.task-body { position: absolute; left: 150px; right: 150px; top: 268px; text-align: left; }
+.task-body .prompt-text { font-size: 43px; }
+.task-then { margin-top: 26px; }
+.task-then .prompt-text { font-size: 36px; }
+.task-open { position: absolute; left: 0; right: 0; top: 822px; display: flex; justify-content: center; }
+.task-open .launch { font-size: 26px; padding: 19px 30px; box-shadow: 0 0 0 4px var(--navy); }
+
+/* ============================== right tool, right job ============================== */
 .pick-head { position: absolute; left: 0; right: 0; top: 62px; text-align: center; }
 .pick-head .display { font-size: 150px; }
 .prompt.pick-bar { position: absolute; left: 230px; right: 230px; top: 280px; width: auto; --c: 24px; }
@@ -275,38 +324,31 @@
 .pick-grid { position: absolute; left: 0; right: 0; top: 462px; display: flex; flex-wrap: wrap; justify-content: center; gap: 26px 28px; padding: 0 110px; }
 .pk { width: 256px; aspect-ratio: 1.16; gap: 14px; transition: scale .35s var(--ease-back), background .25s, opacity .3s; }
 .pk b { font-size: 29px; }
-.pk svg { width: 34%; }
+.pk svg, .pk img.logo { width: 34%; }
 .s-pick.is-answer .pk:not(.is-lit) { opacity: .3; }
 .pk.is-lit { scale: 1.13; background: var(--amber); z-index: 2; }
 .pk.is-lit b { color: var(--navy); }
-.pk.is-lit svg { stroke: var(--navy); }
-.pk.is-lit svg .fill { fill: var(--navy); }
+.pk.is-lit svg.logo { fill: var(--navy); }
 
-/* ============================== 13 · closing ============================== */
-.close-head { position: absolute; left: 150px; top: 92px; text-align: left; }
-.close-head .display { display: block; font-size: 176px; line-height: .92; }
-.prompt.close-card { position: absolute; left: 150px; top: 476px; width: 1200px; }
-.close-card .prompt-text { font-size: 35px; line-height: 1.46; }
-.close-side { position: absolute; right: 150px; top: 104px; width: 400px; display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; }
-.close-side .brandmark { font-size: 100px; }
-.close-side .lead { margin: 6px 0 18px; font-size: 54px; font-style: italic; }
-.close-side .label { font-size: 17px; letter-spacing: .44em; }
-.close-side b.name { font-family: var(--font-body); font-weight: 700; font-size: 40px; line-height: 1; }
+/* ============================== closing ============================== */
+.close-title { position: absolute; left: 0; right: 0; top: 170px; text-align: center; }
+.close-title > span { display: block; font-size: 196px; line-height: .93; }
+.close-pill { position: absolute; left: 0; right: 0; top: 566px; display: flex; justify-content: center; }
+.close-tiles { position: absolute; left: 0; right: 0; top: 700px; display: flex; justify-content: center; gap: 30px; }
+.close-tiles .tile { width: 128px; border-radius: 26px; gap: 0; border-width: 2px; }
+.close-tiles .tile svg, .close-tiles .tile img.logo { width: 54%; }
+.close-tiles .tile:nth-child(odd) { transform: rotate(-5deg) translateY(10px); }
+.close-tiles .tile:nth-child(even) { transform: rotate(4deg) translateY(-8px); }
+.close-thanks { position: absolute; left: 0; right: 0; bottom: 40px; margin: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.close-thanks .lead { font-size: 70px; font-style: italic; }
+.close-thanks .label { display: flex; align-items: center; gap: 22px; font-size: 16px; letter-spacing: .5em; }
+.close-thanks .label::before, .close-thanks .label::after { content: ''; width: 70px; height: 1.5px; background: var(--amber); }
+.close-thanks b { font-family: var(--font-body); font-weight: 700; font-size: 40px; line-height: 1; }
+.close-qr { right: 132px; bottom: 44px; }
 
-/* QR badge to the prompt sheet (dark modules on cream so every phone camera reads it) */
-.qr { position: absolute; }
-.qr .plaque { --c: 18px; }
-.qr-in { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 16px 16px 12px; }
-.qr-in img { display: block; width: 140px; height: 140px; padding: 8px; background: var(--cream); border-radius: 4px; image-rendering: pixelated; }
-.qr-in span { font-family: var(--font-body); font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--cream); white-space: nowrap; }
-.t-qr { right: 132px; bottom: 44px; }
-.close-qr { right: 240px; top: 430px; }
-.close-qr .qr-in img { width: 190px; height: 190px; }
-.t-scan { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(2, 6, 14, .82); z-index: 3; }
-.t-scan .plaque { --c: 34px; }
-.t-scan-in { display: flex; align-items: center; gap: 70px; padding: 60px 76px; text-align: left; }
-.t-scan-in img { display: block; width: 520px; height: 520px; padding: 26px; background: var(--cream); border-radius: 8px; image-rendering: pixelated; }
-.t-scan-in .label { margin: 0 0 26px; font-size: 26px; }
-.t-scan-url { margin: 0 0 40px; font-family: var(--font-mono); font-weight: 700; font-size: 78px; line-height: 1.12; letter-spacing: -.01em; color: var(--amber-hi); }
-.t-scan-in .lead { font-size: 52px; line-height: 1.2; }
-.slide .prompt-link { font-size: 23px; letter-spacing: .04em; }
+/* compact follow-up prompt: text and Copy on one row */
+.prompt--row { display: flex; align-items: center; gap: 20px; padding-right: 26px; }
+.prompt--row .prompt-text { flex: 1; padding-top: 24px; padding-bottom: 28px; }
+.prompt--row .prompt-label { flex: none; margin-left: 30px; font-family: var(--font-mono); font-weight: 500; font-size: 20px; letter-spacing: .22em; text-transform: uppercase; color: var(--amber); }
+.prompt--row .prompt-label + .prompt-text { padding-left: 8px; }
+.prompt--row .prompt-copy { flex: none; margin: 0; font-family: var(--font-mono); text-transform: uppercase; }

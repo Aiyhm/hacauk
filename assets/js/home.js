@@ -51,8 +51,6 @@
 
     var stub = el('div', 'ticket-stub');
     if (d.slides) { stub.appendChild(el('b', '', String(d.slides))); stub.appendChild(el('span', '', 'slides')); }
-    if (d.slides && d.minutes) stub.appendChild(el('i'));
-    if (d.minutes) { stub.appendChild(el('b', '', String(d.minutes))); stub.appendChild(el('span', '', 'minutes')); }
 
     inner.appendChild(coverBox); inner.appendChild(body);
     if (stub.children.length) inner.appendChild(stub);

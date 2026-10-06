@@ -1,6 +1,7 @@
 /* HacAUK deck engine.
    Turns <main class="deck"> full of <section class="slide"> into a presentation:
-   scaled 16:9 stage, build steps, transitions, overview, speaker view, prompt sheet, pace clock. */
+   scaled 16:9 stage, build steps, transitions, an all-slides overview and a prompt sheet.
+   One mode only: what you see is what the room sees. */
 (function (root) {
   'use strict';
 
@@ -19,8 +20,7 @@
   var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
 
   var params = new URLSearchParams(location.search);
-  var MODE = params.has('speaker') ? 'speaker' : (params.get('view') === 'prompts' ? 'sheet' : 'show');
-  var deckId = deckEl.getAttribute('data-deck') || location.pathname;
+  var MODE = params.get('view') === 'prompts' ? 'sheet' : 'show';
   var deckTitle = deckEl.getAttribute('data-title') || doc.title;
   var homeHref = deckEl.getAttribute('data-home') || '../../index.html';
   var EASE_IN = 'cubic-bezier(.7,0,.84,0)', EASE_OUT = 'cubic-bezier(.16,1,.3,1)', EASE_IO = 'cubic-bezier(.76,0,.24,1)';
@@ -32,7 +32,6 @@
 
   /* ------------------------------------------------------------------ DOM */
   body.classList.add('is-deck');
-  if (MODE === 'speaker') body.classList.add('is-speaker');
   if (MODE === 'sheet') body.classList.add('is-sheet');
 
   var viewport = el('div', 'viewport');
@@ -59,7 +58,7 @@
       if (card.hasAttribute('data-nosheet') || card.hasAttribute('data-nocopy')) return;
       var bar = $('.prompt-bar', card), btn = bar && $('.prompt-copy', bar);
       if (!bar) return;
-      var link = el('span', 'prompt-link', 'copy it at <b>' + esc(sheetUrl) + '</b>');
+      var link = el('span', 'prompt-link', 'also at <b>' + esc(sheetUrl) + '</b>');
       btn ? bar.insertBefore(link, btn) : bar.appendChild(link);
     });
   }
@@ -87,7 +86,6 @@
     });
 
     var scene = s.getAttribute('data-scene') || 'night';
-    var notes = $('.notes', s);
     var heading = $('h1,h2', s);
     s.setAttribute('aria-roledescription', 'slide');
     s.setAttribute('aria-label', 'Slide ' + (i + 1) + ' of ' + slideEls.length);
@@ -100,15 +98,10 @@
         return m ? { step: +m[1], sun: World.parseSun(m[2], scene) } : null;
       }).filter(Boolean).sort(function (a, b) { return a.step - b.step; }),
       transition: s.getAttribute('data-transition') || 'fade',
-      minutes: parseFloat(s.getAttribute('data-minutes')) || 0,
-      title: s.getAttribute('data-title') || (heading ? heading.textContent.trim() : 'Slide ' + (i + 1)),
-      notes: notes ? notes.innerHTML : ''
+      title: s.getAttribute('data-title') || (heading ? heading.textContent.trim() : 'Slide ' + (i + 1))
     };
   });
   var total = slides.length;
-  var plannedEnd = []; slides.reduce(function (acc, s, i) { return plannedEnd[i] = acc + s.minutes * 60; }, 0);
-  var plannedTotal = plannedEnd[total - 1] || 0;
-
   var index = -1, step = 0, busy = false, queued = null, pendingStep = 0, arrivingBack = false;
 
   /* ------------------------------------------------------------------ layout */
@@ -125,7 +118,7 @@
     var hw = r.width / scale / 2, hh = r.height / scale / 2;
     return { l: W / 2 - hw, r: W / 2 + hw, t: H / 2 - hh, b: H / 2 + hh, w: hw * 2, h: hh * 2 };
   }
-  // refit after layout has settled: window resize, entering or leaving fullscreen, speaker panel changes
+  // refit after layout has settled: window resize, entering or leaving fullscreen
   function refit() { fit(); requestAnimationFrame(fit); }
   root.addEventListener('resize', refit);
   doc.addEventListener('fullscreenchange', refit);
@@ -140,7 +133,7 @@
     for (var k = 1; k <= s.steps; k++) s.el.classList.toggle('step-' + k, k <= n);
     s.el.setAttribute('data-at', n);
   }
-  function setStep(n, opts) {
+  function setStep(n) {
     var s = slides[index]; if (!s) return;
     n = clamp(n, 0, s.steps);
     if (n === step) return;
@@ -148,7 +141,7 @@
     paintSteps(s, n);
     if (s.sunAt.length) applyWorld(s);
     s.el.dispatchEvent(new CustomEvent('deck:step', { bubbles: true, detail: { step: n, prev: prev, index: index } }));
-    changed(opts);
+    changed();
   }
 
   /* ------------------------------------------------------------------ world */
@@ -289,7 +282,7 @@
     i = clamp(i, 0, total - 1);
     if (busy) { queued = [i, st, dir, opts]; return; }
     var from = slides[index], to = slides[i];
-    if (from === to) { setStep(st || 0, opts); return; }
+    if (from === to) { setStep(st || 0); return; }
     busy = true; pendingStep = st || 0; arrivingBack = dir < 0;
     var kind = opts.instant ? 'cut' : (calm ? 'fade' : (dir >= 0 ? to.transition : from.transition));
     if (!T[kind]) kind = 'fade';
@@ -301,14 +294,14 @@
       applyWorld(to, true); enter(to, 0);
     }
     busy = false;
-    changed(opts);
+    changed();
     if (queued) { var q = queued; queued = null; q[3] = Object.assign({}, q[3], { instant: true }); show(q[0], q[1], q[2], q[3]); }
   }
 
   function next() {
     var s = slides[index]; if (!s || busy) return;      // a second press mid-transition is ignored, so a bouncy clicker cannot skip a slide
     if (step < s.steps) return setStep(step + 1);
-    if (index < total - 1) { startClock(); return show(index + 1, 0, 1); }
+    if (index < total - 1) return show(index + 1, 0, 1);
   }
   function prev() {
     var s = slides[index]; if (!s || busy) return;
@@ -316,27 +309,11 @@
     if (index > 0) return show(index - 1, slides[index - 1].steps, -1);
   }
 
-  /* ------------------------------------------------------------------ session clock + pace */
-  var clockKey = 'hacauk:clock:' + deckId, t0 = 0;
-  try { t0 = +sessionStorage.getItem(clockKey) || 0; } catch (e) {}
-  function startClock() { if (t0) return; t0 = Date.now(); persistClock(); sync(); }
-  function resetClock() { t0 = 0; persistClock(); paintClock(); sync(); toast('Session clock reset'); }
-  function persistClock() { try { t0 ? sessionStorage.setItem(clockKey, t0) : sessionStorage.removeItem(clockKey); } catch (e) {} }
-  function mmss(sec) { sec = Math.max(0, Math.round(sec)); return Math.floor(sec / 60) + ':' + pad(sec % 60); }
-  function pace() {
-    if (!t0 || !plannedTotal) return { state: 'idle', label: 'not started' };
-    var e = (Date.now() - t0) / 1000, start = index > 0 ? plannedEnd[index - 1] : 0, end = plannedEnd[index];
-    if (e > end + 20) return { state: 'behind', label: '+' + mmss(e - end) + ' behind' };
-    if (e < start - 20) return { state: 'ahead', label: mmss(start - e) + ' ahead' };
-    return { state: 'on', label: 'on pace' };
-  }
-
   /* ------------------------------------------------------------------ HUD */
   var ICON = {
     prev: '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',
     next: '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',
     grid: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1"/></svg>',
-    notes: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></svg>',
     full: '<svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
     help: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 114 2c-.9.6-1.6 1.2-1.6 2.3M12 17.2v.1"/></svg>'
   };
@@ -344,17 +321,14 @@
   hud.innerHTML =
     '<a class="hud-brand brandmark" href="' + esc(homeHref) + '" title="Back to the library">H<small>ac</small>AUK</a>' +
     '<span class="hud-title">' + esc(deckTitle) + '</span><span class="hud-space"></span>' +
-    '<span class="hud-read hud-pace" data-state="idle"></span>' +
-    '<span class="hud-read hud-clock" title="Session clock"></span>' +
     '<span class="hud-read hud-count"></span>' +
-    '<button class="hud-btn" type="button" data-act="prev" aria-label="Previous">' + ICON.prev + '</button>' +
-    '<button class="hud-btn" type="button" data-act="next" aria-label="Next">' + ICON.next + '</button>' +
+    '<button class="hud-btn" type="button" data-act="prev" aria-label="Back" title="Back (←)">' + ICON.prev + '</button>' +
+    '<button class="hud-btn" type="button" data-act="next" aria-label="Next" title="Next (→)">' + ICON.next + '</button>' +
     '<button class="hud-btn" type="button" data-act="overview" aria-label="All slides (O)" title="All slides (O)">' + ICON.grid + '</button>' +
-    '<button class="hud-btn" type="button" data-act="speaker" aria-label="Speaker view (S)" title="Speaker view (S)">' + ICON.notes + '</button>' +
     '<button class="hud-btn" type="button" data-act="fullscreen" aria-label="Fullscreen (F)" title="Fullscreen (F)">' + ICON.full + '</button>' +
     '<button class="hud-btn" type="button" data-act="help" aria-label="Shortcuts (?)" title="Shortcuts (?)">' + ICON.help + '</button>';
   body.appendChild(hud);
-  var hudCount = $('.hud-count', hud), hudClock = $('.hud-clock', hud), hudPace = $('.hud-pace', hud);
+  var hudCount = $('.hud-count', hud);
   hud.addEventListener('click', function (e) {
     var b = e.target.closest('[data-act]'); if (!b) return;
     e.stopPropagation(); act(b.getAttribute('data-act')); b.blur();
@@ -369,21 +343,13 @@
   }
   doc.addEventListener('mousemove', wake);
 
-  function paintClock() {
-    var e = t0 ? (Date.now() - t0) / 1000 : 0, p = pace();
-    hudClock.innerHTML = '<b>' + mmss(e) + '</b>' + (plannedTotal ? ' / ' + mmss(plannedTotal) : '');
-    hudPace.textContent = p.label; hudPace.setAttribute('data-state', p.state);
-    if (MODE === 'speaker') paintSpeakerClock(e, p);
-  }
-  setInterval(paintClock, 1000);
-
   function toast(msg, ms) {
     toastEl.textContent = msg; toastEl.classList.add('is-on');
     clearTimeout(toast.t); toast.t = setTimeout(function () { toastEl.classList.remove('is-on'); }, ms || 1800);
   }
 
   /* ------------------------------------------------------------------ after every change */
-  function changed(opts) {
+  function changed() {
     var s = slides[index]; if (!s) return;
     hudCount.innerHTML = '<b>' + pad(index + 1) + '</b> / ' + pad(total);
     var done = total > 1 ? (index + (s.steps ? step / (s.steps + 1) : 0)) / (total - 1) : 1;
@@ -391,10 +357,7 @@
     var hash = '#' + (index + 1) + (step ? '.' + step : '');
     try { history.replaceState(null, '', location.pathname + location.search + hash); } catch (e) { location.hash = hash; }
     doc.title = (index + 1) + '. ' + s.title + ' — ' + deckTitle;
-    paintClock();
-    if (MODE === 'speaker') paintSpeaker();
     $$('.thumb', overviewGrid).forEach(function (t, i) { t.classList.toggle('is-current', i === index); });
-    if (!(opts && opts.silent)) sync();
   }
 
   /* ------------------------------------------------------------------ overview */
@@ -403,8 +366,8 @@
   body.appendChild(overview);
   var overviewGrid = $('.overview-grid', overview), overviewBuilt = false;
 
-  function buildThumb(s, tag) {
-    var t = el(tag || 'button', 'thumb'); if (!tag) t.type = 'button';
+  function buildThumb(s) {
+    var t = el('button', 'thumb'); t.type = 'button';
     var inner = el('div', 'thumb-stage');
     var w = el('div', 'world is-still'); w.innerHTML = World.markup();
     World.apply(w, s.scene, sunFor(s, s.steps), false);
@@ -417,7 +380,6 @@
     $$('[data-full]', clone).forEach(function (n) { n.textContent = n.getAttribute('data-full'); });
     $$('[id]', clone).forEach(function (n) { n.removeAttribute('id'); });
     $$('a,button,[tabindex]', clone).forEach(function (n) { n.setAttribute('tabindex', '-1'); });
-    $$('.notes', clone).forEach(function (n) { n.remove(); });
     inner.appendChild(w); inner.appendChild(clone); t.appendChild(inner);
     t.appendChild(el('span', 'thumb-n', pad(s.i + 1)));
     t.appendChild(el('span', 'thumb-t', esc(s.title)));
@@ -441,9 +403,8 @@
 
   /* ------------------------------------------------------------------ help */
   var KEYS = [
-    ['→ Space', 'Next step or slide'], ['←', 'Back'], ['F', 'Fullscreen'], ['O', 'All slides'],
-    ['S', 'Speaker view (notes, next slide, clock)'], ['D', 'Open this slide’s live demo (Shift+D: the second one)'],
-    ['C', 'Copy this slide’s prompt'], ['T', 'Start / pause the activity timer'], ['R', 'Reset the timer (Shift+R: session clock)'],
+    ['→ Space', 'Next step or slide (a click works too)'], ['←', 'Back'], ['F', 'Fullscreen'], ['O', 'All slides'],
+    ['D', 'Open this slide’s tool (Shift+D: the second one)'], ['C', 'Copy the prompt on screen (again: the follow-up)'],
     ['B', 'Black out the screen'], ['M', 'Calm / full motion'], ['1…9 Enter', 'Jump to a slide'], ['Home End', 'First / last slide']
   ];
   var help = el('div', 'help');
@@ -453,74 +414,11 @@
   body.appendChild(help);
   help.addEventListener('click', function () { body.classList.remove('is-help'); });
 
-  /* ------------------------------------------------------------------ speaker view */
-  var peer = null, speakerEls = null;
-  function sync() {
-    var msg = { __hacauk: deckId, type: 'state', index: index, step: step, t0: t0 };
-    var targets = [];
-    if (MODE === 'speaker' && root.opener && !root.opener.closed) targets.push(root.opener);
-    if (peer && !peer.closed) targets.push(peer);
-    targets.forEach(function (w) { try { w.postMessage(msg, '*'); } catch (e) {} });
-  }
-  root.addEventListener('message', function (e) {
-    var m = e.data; if (!m || m.__hacauk !== deckId) return;
-    if (m.type === 'hello') { if (MODE !== 'speaker') { peer = e.source; sync(); } return; }
-    if (m.type !== 'state') return;
-    if (m.t0 !== t0) { t0 = m.t0 || 0; persistClock(); paintClock(); }
-    if (m.index === index && m.step === step) return;
-    if (m.index === index) setStep(m.step, { silent: true });
-    else show(m.index, m.step, m.index > index ? 1 : -1, { silent: true });
-  });
-  function openSpeaker() {
-    if (MODE === 'speaker') return;
-    var url = location.pathname + '?speaker=1' + location.hash;
-    peer = root.open(url, 'hacauk-speaker', 'width=1280,height=760');
-    if (!peer) toast('Allow pop-ups to open the speaker view', 3200);
-  }
-  function buildSpeaker() {
-    var wrap = el('div', 'speaker');
-    wrap.innerHTML =
-      '<aside class="sp-side">' +
-        '<div class="sp-clock"><div><span>Elapsed</span><b class="sp-elapsed">0:00</b></div>' +
-        '<div class="sp-pace" data-state="idle"><span>Pace</span><b class="sp-pace-v">—</b></div>' +
-        '<div><span>Slide</span><b class="sp-count"></b></div></div>' +
-        '<div><p class="sp-h">Now</p><h2 class="sp-title"></h2></div>' +
-        '<div><p class="sp-h">Notes</p><div class="sp-notes"></div></div>' +
-        '<div class="sp-prompts-wrap"><p class="sp-h">Prompts on this slide · C copies the visible one</p><div class="sp-prompts"></div></div>' +
-      '</aside>' +
-      '<div class="sp-bottom"><div class="sp-next"><p class="sp-h">Next</p><div class="sp-next-slot"></div></div>' +
-      '<p class="sp-keys">→ next &nbsp;·&nbsp; ← back &nbsp;·&nbsp; T timer &nbsp;·&nbsp; D demo &nbsp;·&nbsp; C copy prompt<br>This window drives the main screen, and follows it.</p></div>';
-    body.appendChild(wrap);
-    speakerEls = {
-      elapsed: $('.sp-elapsed', wrap), pace: $('.sp-pace', wrap), paceV: $('.sp-pace-v', wrap), count: $('.sp-count', wrap),
-      title: $('.sp-title', wrap), notes: $('.sp-notes', wrap), prompts: $('.sp-prompts', wrap), promptsWrap: $('.sp-prompts-wrap', wrap),
-      next: $('.sp-next-slot', wrap)
-    };
-    if (root.opener) {
-      var hello = function () { try { root.opener.postMessage({ __hacauk: deckId, type: 'hello' }, '*'); } catch (e) {} };
-      hello(); setInterval(hello, 2500);
-    }
-  }
-  function paintSpeakerClock(e, p) {
-    if (!speakerEls) return;
-    speakerEls.elapsed.textContent = mmss(e);
-    speakerEls.paceV.textContent = p.label; speakerEls.pace.setAttribute('data-state', p.state);
-  }
-  function paintSpeaker() {
-    if (!speakerEls) return;
-    var s = slides[index], n = slides[index + 1];
-    speakerEls.count.textContent = (index + 1) + ' / ' + total + (s.steps ? '  ·  step ' + step + '/' + s.steps : '');
-    speakerEls.title.textContent = s.title + (s.minutes ? '  ·  ' + s.minutes + ' min' : '');
-    speakerEls.notes.innerHTML = s.notes || '<p>No notes for this slide.</p>';
-    var prompts = $$('.prompt', s.el).map(function (c) { return Fx.promptText(c); }).filter(Boolean);
-    speakerEls.promptsWrap.style.display = prompts.length ? '' : 'none';
-    speakerEls.prompts.innerHTML = prompts.map(function (t) { return '<p class="sp-prompt">' + esc(t).replace(/\n/g, '<br>') + '</p>'; }).join('');
-    speakerEls.next.innerHTML = '';
-    if (n) speakerEls.next.appendChild(buildThumb(n, 'div'));
-    else speakerEls.next.appendChild(el('p', 'sp-keys', 'End of deck.'));
-  }
-
   /* ------------------------------------------------------------------ prompt sheet */
+  function uniqueLinks(scope) {
+    var seen = {};
+    return $$('a.launch[href]', scope).filter(function (a) { if (seen[a.href]) return false; seen[a.href] = 1; return true; });
+  }
   function buildSheet() {
     var page = el('main', 'sheet');
     var brand = el('a', 'brandmark sheet-brand'); brand.href = homeHref; brand.innerHTML = 'H<small>ac</small>AUK';
@@ -544,7 +442,7 @@
         Fx.fill(text, text.dataset.copy);
         box.appendChild(text); item.appendChild(box); count++;
       });
-      var links = $$('a.launch[href]', s.el);
+      var links = uniqueLinks(s.el);
       if (links.length) {
         var row = el('div', 'sheet-links');
         links.forEach(function (a) {
@@ -568,10 +466,9 @@
   }
   function openDemo(nth) {
     var s = slides[index]; if (!s) return;
-    var links = $$('a.launch[href]', s.el);
-    var visible = links.filter(function (a) { var h = a.closest('[data-step]'); return !h || h.classList.contains('is-shown'); });
-    var a = (visible.length ? visible : links)[nth || 0] || (visible.length ? visible : links)[0];
-    if (!a) return toast('No live demo on this slide');
+    var links = uniqueLinks(s.el);
+    var a = links[nth || 0] || links[0];
+    if (!a) return toast('No tool to open on this slide');
     root.open(a.href, '_blank', 'noopener');
   }
   var copyTurn = { slide: -1, n: 0 };
@@ -586,12 +483,9 @@
       toast(cards.length > 1 ? 'Prompt ' + (i + 1) + ' of ' + cards.length + ' copied' : 'Prompt copied');
     }, function () { toast('Could not copy — select the text instead'); });
   }
-  function timer(reset) {
-    var s = slides[index]; if (!s) return;
-    var cd = Fx.activeCountdown(s.el);
-    if (!cd) return toast('No timer on this slide');
-    reset ? cd.reset() : cd.toggle();
-  }
+  // the on-slide Copy buttons report through the same toast
+  doc.addEventListener('deck:copied', function (e) { toast(e.detail && e.detail.ok ? 'Prompt copied' : 'Could not copy — select the text instead'); });
+
   function setCalm(v) {
     calm = v; body.classList.toggle('motion-calm', calm); body.classList.toggle('motion-full', !calm);
     try { sessionStorage.setItem('hacauk:motion', calm ? 'calm' : 'full'); } catch (e) {}
@@ -601,7 +495,6 @@
       case 'next': next(); break;
       case 'prev': prev(); break;
       case 'overview': body.classList.contains('is-overview') ? closeOverview() : openOverview(); break;
-      case 'speaker': openSpeaker(); break;
       case 'fullscreen': fullscreen(); break;
       case 'help': body.classList.toggle('is-help'); break;
     }
@@ -637,13 +530,9 @@
       case 'End': show(total - 1, 0, 1, { instant: true }); break;
       case 'f': case 'F': fullscreen(); break;
       case 'o': case 'O': case 'g': case 'G': openOverview(); break;
-      case 's': case 'S': openSpeaker(); break;
       case 'd': openDemo(0); break;
       case 'D': openDemo(1); break;
       case 'c': case 'C': copyPrompt(); break;
-      case 't': case 'T': timer(false); break;
-      case 'r': timer(true); break;
-      case 'R': resetClock(); break;
       case 'b': case 'B': case '.': body.classList.add('is-black'); break;
       case 'm': case 'M': setCalm(!calm); toast(calm ? 'Calm motion' : 'Full motion'); break;
       case '?': case '/': case 'h': case 'H': body.classList.toggle('is-help'); break;
@@ -673,7 +562,6 @@
   /* ------------------------------------------------------------------ boot */
   setCalm(calm);
   if (MODE === 'sheet') { buildSheet(); deckEl.classList.add('is-ready'); return; }
-  if (MODE === 'speaker') buildSpeaker();
   fit();
   var m = /^#(\d+)(?:\.(\d+))?/.exec(location.hash);
   var startAt = m ? clamp(parseInt(m[1], 10) - 1, 0, total - 1) : 0;
@@ -681,7 +569,7 @@
   deckEl.classList.add('is-ready');
   applyWorld(slides[startAt], true);
   enter(slides[startAt], 150);
-  changed({ silent: MODE !== 'speaker' });
+  changed();
   if (sysReduced && !motionPref) setTimeout(function () { toast('Reduced motion is on — press M for full motion', 4200); }, 900);
   if (doc.fonts && doc.fonts.ready) doc.fonts.ready.then(fit);
 

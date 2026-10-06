@@ -8,8 +8,7 @@ window.HACAUK_DECKS = [
     time: '2:00 PM',
     place: 'Library, Learning Center',
     presenter: 'Aiyhm Mahir',
-    slides: 13,
-    minutes: 45,
+    slides: 14,
     href: 'decks/art-of-ai-prompting/index.html',
     cover: 'assets/img/cover-art-of-ai-prompting.jpg'
   }
