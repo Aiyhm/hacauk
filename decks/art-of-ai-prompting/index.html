@@ -62,7 +62,7 @@
 
     <div class="t-info-wrap" data-anim="rise" data-delay="2050">
       <div class="plaque">
-        <div class="plaque-cell"><svg viewBox="0 0 48 48"><rect x="7" y="10" width="34" height="31" rx="4"/><path d="M7 20h34M16 5v9M32 5v9M16 28h4M28 28h4M16 34h4"/></svg><span>Tuesday<br>6th of Oct</span></div>
+        <div class="plaque-cell"><svg viewBox="0 0 48 48"><rect x="7" y="10" width="34" height="31" rx="4"/><path d="M7 20h34M16 5v9M32 5v9M16 28h4M28 28h4M16 34h4"/></svg><span>Today<br>October 6</span></div>
         <div class="plaque-cell"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="17"/><path d="M24 13v12l7 5"/></svg><span>2:00 PM</span></div>
         <div class="plaque-cell"><svg viewBox="0 0 48 48"><path d="M24 43S9 29 9 19a15 15 0 0130 0c0 10-15 24-15 24Z"/><circle cx="24" cy="19" r="5"/></svg><span>Library,<br>Learning Center</span></div>
       </div>
@@ -73,7 +73,7 @@
     </div>
 
     <!-- one click: the QR fills the screen so the back row can scan it -->
-    <div class="t-scan" data-step="1" data-anim="fade">
+    <div class="scan t-scan" data-step="1" data-anim="fade">
       <div class="t-scan-in">
         <img src="../../assets/img/qr-prompts.svg" alt="QR code to the prompt sheet">
         <div>
@@ -506,7 +506,7 @@
   </section>
 
   <!-- ===================================================== 14 · CLOSING -->
-  <section class="slide s-close" data-title="Now go prompt something" data-scene="dusk" data-sun="960,1190,1.45" data-transition="sun">
+  <section class="slide s-close" data-title="Now go prompt something" data-scene="dusk" data-sun="640,1230,1.35" data-transition="sun">
     <div class="t-top" data-anim="drop" data-delay="1500">
       <span class="wing wing--l"><i></i><i></i><i></i></span>
       <span class="brandmark">H<small>ac</small>AUK</span>
@@ -514,7 +514,7 @@
     </div>
 
     <h2 class="display close-title">
-      <span data-split data-arc="0.06" data-lean="3" data-delay="500">Now go prompt</span>
+      <span data-split data-delay="500">Now go prompt</span>
       <span class="display--amber" data-split data-delay="1150">something.</span>
     </h2>
 
@@ -534,6 +534,23 @@
     <p class="close-thanks" data-anim="rise" data-delay="2900"><span class="lead">Thank you.</span><span class="label">Presenter</span><b>Aiyhm Mahir</b></p>
     <div class="qr close-qr" data-anim="fade" data-delay="3100">
       <div class="qr-in"><img src="../../assets/img/qr-prompts.svg" alt="QR code to the prompt sheet"><span>Keep the prompts</span></div>
+    </div>
+
+    <div class="close-attend" data-anim="rise" data-delay="1700">
+      <img src="../../assets/img/qr-attendance.svg" alt="QR code to mark your attendance">
+      <p><span class="label">Before you leave</span><b>Mark your attendance</b></p>
+    </div>
+
+    <!-- one click: the attendance QR fills the screen so the back row can scan it -->
+    <div class="scan close-scan" data-step="1" data-anim="fade">
+      <div class="close-scan-in">
+        <img src="../../assets/img/qr-attendance.svg" alt="QR code to mark your attendance">
+        <div>
+          <p class="label">Before you leave</p>
+          <p class="close-scan-big">Mark your attendance</p>
+          <p class="lead">Scan it with your phone camera.</p>
+        </div>
+      </div>
     </div>
   </section>
 
