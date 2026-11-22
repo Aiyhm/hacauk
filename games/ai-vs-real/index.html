@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AI or Real? | HacAUK</title>
+  <meta name="description" content="Five pairs of pictures. One in each pair is AI generated. Can you spot it?">
+  <meta name="theme-color" content="#06122f">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Rajdhani:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=8">
+</head>
+<body>
+  <!-- Shared arcade art -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="crt" viewBox="0 0 260 330">
+      <path d="M22 8 L238 26 L252 208 L14 214Z" fill="#f5ab15" stroke="#020811" stroke-width="5"/>
+      <path d="M42 28 L220 42 L230 188 L34 192Z" fill="#06122f" stroke="#020811" stroke-width="5"/>
+      <path d="M72 84 L118 118 L72 152 L72 134 L96 118 L72 102Z" fill="#f5ab15"/>
+      <rect class="cursor" x="122" y="146" width="62" height="13" fill="#f5ab15"/>
+      <rect x="28" y="198" width="30" height="8" fill="#020811"/>
+      <path d="M40 228 L226 224 L256 288 L10 296Z" fill="#f5ab15" stroke="#020811" stroke-width="5"/>
+      <g fill="#020811">
+        <path d="M46 238 h170 l5 9 h-180z"/><path d="M38 255 h186 l5 9 h-196z"/><path d="M30 272 h130 l4 9 h-140z"/><path d="M172 272 h60 l4 9 h-68z"/>
+      </g>
+    </symbol>
+    <symbol id="globe" viewBox="0 0 260 300">
+      <path d="M8 26 L252 4 L252 262 L8 276Z" fill="#f5ab15" stroke="#020811" stroke-width="5"/>
+      <path d="M28 44 L232 26 L232 244 L28 256Z" fill="#06122f" stroke="#020811" stroke-width="5"/>
+      <g fill="none" stroke="#f8e8c3" stroke-width="5">
+        <ellipse cx="130" cy="122" rx="74" ry="76"/><ellipse cx="130" cy="122" rx="32" ry="76"/>
+        <path d="M130 46 V198 M58 98 H202 M58 146 H202"/>
+      </g>
+      <path d="M52 222 L116 216 V228 L52 234Z M138 214 L208 208 V220 L138 226Z" fill="#f5ab15"/>
+    </symbol>
+    <symbol id="checker" viewBox="0 0 30 30">
+      <path d="M10 0h10v10H10z M0 10h10v10H0z M20 10h10v10H20z M10 20h10v10H10z" fill="#f5ab15"/>
+    </symbol>
+    <symbol id="spark" viewBox="0 0 40 40">
+      <path d="M20 0 L23.5 16.5 L40 20 L23.5 23.5 L20 40 L16.5 23.5 L0 20 L16.5 16.5Z" fill="#ffb317"/>
+    </symbol>
+  </svg>
+
+  <!-- Start -->
+  <main id="start" class="screen start">
+    <button class="chip chip-btn music-toggle music-corner" type="button"></button>
+    <div class="rays-wrap" aria-hidden="true"><div class="rays"></div></div>
+    <svg class="grid" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+    <svg class="art art-crt" aria-hidden="true"><use href="#crt"/></svg>
+    <svg class="art art-globe" aria-hidden="true"><use href="#globe"/></svg>
+    <svg class="art mark mark-1" aria-hidden="true"><use href="#checker"/></svg>
+    <svg class="art mark mark-2" aria-hidden="true"><use href="#checker"/></svg>
+    <svg class="art spark spark-1" aria-hidden="true"><use href="#spark"/></svg>
+    <svg class="art spark spark-2" aria-hidden="true"><use href="#spark"/></svg>
+    <svg class="art spark spark-3" aria-hidden="true"><use href="#spark"/></svg>
+    <svg class="art spark spark-4" aria-hidden="true"><use href="#spark"/></svg>
+
+    <div class="start-copy">
+      <div class="badge">
+        <span class="wing" aria-hidden="true"></span>
+        <div class="badge-plate"><img src="assets/hacauk-logo.webp" alt="HacAUK" width="1100" height="491"></div>
+        <span class="wing wing-r" aria-hidden="true"></span>
+      </div>
+      <h1 id="title" class="title" aria-label="AI or real?"></h1>
+      <div class="terminal">
+        <span class="prompt-sign" aria-hidden="true">&gt;</span>
+        <span class="load" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+        <span>5 pairs. Spot the AI in each.</span>
+      </div>
+      <button id="begin" class="ticket" type="button">
+        <span class="ticket-main">Start the quiz</span>
+        <span class="ticket-stub" aria-hidden="true"><svg><use href="#checker"/></svg></span>
+      </button>
+    </div>
+  </main>
+
+  <!-- Quiz -->
+  <main id="quiz" class="screen quiz" hidden>
+    <div class="rays-wrap rays-top" aria-hidden="true"><div class="rays"></div></div>
+
+    <header class="bar">
+      <img class="logo" src="assets/hacauk-logo.webp" alt="HacAUK" width="1100" height="491">
+      <h2 id="prompt" class="prompt" tabindex="-1" aria-label="Which is AI?"></h2>
+      <div class="bar-end">
+        <p class="chip">Score <strong id="score-now">0</strong></p>
+        <button class="chip chip-btn music-toggle" type="button"></button>
+        <button id="restart" class="chip chip-btn" type="button">Start over</button>
+      </div>
+    </header>
+
+    <div class="board">
+      <div id="pictures" class="pictures"></div>
+    </div>
+
+    <div class="foot">
+      <div class="terminal terminal-sm">
+        <span class="prompt-sign" aria-hidden="true">&gt;</span>
+        <ol id="lamps" class="load load-live"></ol>
+        <span id="round-label"></span>
+      </div>
+      <div id="verdict" class="verdict" aria-live="polite">
+        <p id="verdict-main" class="verdict-main"></p>
+        <p id="verdict-sub" class="verdict-sub"></p>
+      </div>
+      <div class="foot-end">
+        <button id="next" class="ticket ticket-sm" type="button" hidden>
+          <span id="next-label" class="ticket-main">Next pair</span>
+          <span class="ticket-stub" aria-hidden="true"><svg><use href="#checker"/></svg></span>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Result -->
+  <main id="result" class="screen result" hidden>
+    <button class="chip chip-btn music-toggle music-corner" type="button"></button>
+    <div class="rays-wrap" aria-hidden="true"><div class="rays"></div></div>
+    <svg class="grid" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+    <svg class="art art-crt" aria-hidden="true"><use href="#crt"/></svg>
+    <svg class="art art-globe" aria-hidden="true"><use href="#globe"/></svg>
+    <svg class="art spark spark-1" aria-hidden="true"><use href="#spark"/></svg>
+    <svg class="art spark spark-2" aria-hidden="true"><use href="#spark"/></svg>
+
+    <div class="result-copy">
+      <div class="badge badge-sm">
+        <span class="wing" aria-hidden="true"></span>
+        <div class="badge-plate"><img src="assets/hacauk-logo.webp" alt="HacAUK" width="1100" height="491"></div>
+        <span class="wing wing-r" aria-hidden="true"></span>
+      </div>
+      <h2 id="final" class="final" tabindex="-1"></h2>
+      <p id="rating" class="terminal rating"></p>
+      <div class="table">
+        <ol id="review" class="review"></ol>
+      </div>
+      <button id="again" class="ticket" type="button">
+        <span class="ticket-main">Next player</span>
+        <span class="ticket-stub" aria-hidden="true"><svg><use href="#checker"/></svg></span>
+      </button>
+    </div>
+  </main>
+
+  <script src="app.js?v=5"></script>
+</body>
+</html>

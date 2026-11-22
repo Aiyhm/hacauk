@@ -2,6 +2,14 @@
    Only `title` and `href` are required. */
 window.HACAUK_DECKS = [
   {
+    title: 'Responsible AI: Think Before You Trust',
+    kicker: 'Interactive workshop',
+    presenter: 'Aiyhm Mahir',
+    slides: 28,
+    href: 'decks/responsible-ai/index.html',
+    cover: 'assets/img/cover-responsible-ai.jpg'
+  },
+  {
     title: 'The Art of AI Prompting',
     kicker: 'Workshop',
     date: 'Tue 6 Oct 2026',
